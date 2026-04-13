@@ -15,7 +15,6 @@ export default async function Page() {
         }
     });
     const users = await datos.json();
-    // console.log(await datos.json());
 
     return (
         <>

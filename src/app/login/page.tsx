@@ -16,7 +16,6 @@ export default function LoginPage() {
     validationSchema: loginSchema,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       const result = await loginAction(values);
-      console.log(result)
       if (result.success) {
         router.push("/dashboard");
       } else {
