@@ -7,7 +7,7 @@ const menuItems = [
   { name: "Dashboard", href: "/dashboard", icon: "📊" },
   { name: "Pedidos", href: "/dashboard/pedidos", icon: "📦" },
   { name: "Productos", href: "/dashboard/productos", icon: "🏷️" },
-  { name: "Clientes", href: "/dashboard/clientes", icon: "👥" },
+  { name: "Usuarios", href: "/dashboard/clientes", icon: "👥" },
   { name: "Inventario", href: "/dashboard/inventario", icon: "📁" },
   { name: "Reportes", href: "/dashboard/reportes", icon: "📈" },
   { name: "Configuración", href: "/dashboard/configuracion", icon: "⚙️" },

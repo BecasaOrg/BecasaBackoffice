@@ -1,6 +1,7 @@
 "use server";
 
 import { loginSchema } from "@/schemas/loginSchema";
+import { cookies } from "next/headers";
 
 export async function loginAction(values: { email: string; password: string }) {
   try {
@@ -10,20 +11,29 @@ export async function loginAction(values: { email: string; password: string }) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       },
       body: JSON.stringify(validatedFields),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
       return {
         success: false,
-        message: errorData.message || "Error al iniciar sesión",
+        message: data.message || "Credenciales incorrectas",
       };
     }
-
-    const data = await response.json();
     
+    const cookieStore = await cookies();
+    cookieStore.set("auth_token", data.token || data.access_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
     return {
       success: true,
       data,

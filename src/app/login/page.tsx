@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
 import { loginSchema } from "@/schemas/loginSchema";
-import { loginAction } from "@/actions/loginActions";
+import { loginAction } from "@/actions/login.action";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -47,7 +47,7 @@ export default function LoginPage() {
               type="email"
               id="email"
               {...formik.getFieldProps("email")}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="correo@ejemplo.com"
             />
             {formik.touched.email && formik.errors.email && (
@@ -63,7 +63,7 @@ export default function LoginPage() {
               type="password"
               id="password"
               {...formik.getFieldProps("password")}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••••"
             />
             {formik.touched.password && formik.errors.password && (
