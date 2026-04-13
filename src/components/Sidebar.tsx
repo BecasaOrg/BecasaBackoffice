@@ -33,7 +33,7 @@ export default function Sidebar() {
                   }`}
                 >
                   <span>{item.icon}</span>
-                  <span>{item.name}</span>
+                  <span className="text-primary">{item.name}</span>
                 </Link>
               </li>
             );
