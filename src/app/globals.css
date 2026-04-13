@@ -17,6 +17,7 @@
   --color-secondary-light: var(--secondary-light);
   --color-muted: var(--muted);
   --font-sans: var(--font-inter);
+  --color-primary-foreground: #000000;
 }
 
 @media (prefers-color-scheme: dark) {

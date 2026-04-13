@@ -15,7 +15,7 @@ export default function UserCard({ user }: Props) {
             </div>
             <div>
                 <div className='cursor-pointer'>
-                    <FaTrash />
+                    <FaTrash color='#b8ff05' />
                 </div>
             </div>
         </div>
