@@ -12,9 +12,9 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-gray-900 text-white min-h-screen flex flex-col">
+    <aside className="w-72 bg-gray-900 text-[#b8ff05] min-h-screen flex flex-col">
       <div className="p-4 border-b border-gray-800">
-        <h1 className="text-xl font-bold">Becasa</h1>
+        <h1 className="text-3xl font-bold">Becasa</h1>
         <p className="text-xs text-gray-400">Backoffice</p>
       </div>
 

@@ -19,7 +19,6 @@ export default async function Page() {
 
     return (
         <>
-            <h2 className='text-black'>Usuarios:</h2>
             {
                 users.map((user: UserInterface) => {
                     return (
