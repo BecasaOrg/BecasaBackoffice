@@ -1,5 +1,6 @@
 "use client";
 
+import { logoutAction } from "@/actions/login.action";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -42,13 +43,13 @@ export default function Sidebar() {
       </nav>
 
       <div className="p-4 border-t border-gray-800">
-        <Link
-          href="/login"
-          className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+        <button
+          onClick={() => logoutAction()}
+          className="flex items-center gap-3 px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors w-full"
         >
           <span>🚪</span>
           <span>Cerrar sesión</span>
-        </Link>
+        </button>
       </div>
     </aside>
   );

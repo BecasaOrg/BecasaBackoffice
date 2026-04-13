@@ -2,6 +2,7 @@
 
 import { loginSchema } from "@/schemas/loginSchema";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function loginAction(values: { email: string; password: string }) {
   try {
@@ -24,7 +25,7 @@ export async function loginAction(values: { email: string; password: string }) {
         message: data.message || "Credenciales incorrectas",
       };
     }
-    
+
     const cookieStore = await cookies();
     cookieStore.set("auth_token", data.token || data.access_token, {
       httpOnly: true,
@@ -56,4 +57,10 @@ export async function loginAction(values: { email: string; password: string }) {
       message: "Error de conexión",
     };
   }
+}
+
+export async function logoutAction() {
+  const cookieStore = await cookies();
+  cookieStore.delete("auth_token");
+  redirect("/login");
 }
