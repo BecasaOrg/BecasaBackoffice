@@ -5,12 +5,7 @@ import { usePathname } from "next/navigation";
 
 const menuItems = [
   { name: "Dashboard", href: "/dashboard", icon: "📊" },
-  { name: "Pedidos", href: "/dashboard/pedidos", icon: "📦" },
-  { name: "Productos", href: "/dashboard/productos", icon: "🏷️" },
-  { name: "Usuarios", href: "/dashboard/clientes", icon: "👥" },
-  { name: "Inventario", href: "/dashboard/inventario", icon: "📁" },
-  { name: "Reportes", href: "/dashboard/reportes", icon: "📈" },
-  { name: "Configuración", href: "/dashboard/configuracion", icon: "⚙️" },
+  { name: "Usuarios", href: "/dashboard/users", icon: "👥" },
 ];
 
 export default function Sidebar() {
