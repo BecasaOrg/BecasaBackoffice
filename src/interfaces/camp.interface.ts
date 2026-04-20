@@ -15,4 +15,5 @@ export interface CampInterface {
     city_id?: number;
     created_at: string;
     updated_at: string;
+    sport?: string;
 }
