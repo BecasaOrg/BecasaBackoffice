@@ -30,8 +30,8 @@ export default function LoginPage() {
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-600">
-      <div className="bg-secondary p-8 rounded-lg shadow-md w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="bg-secondary p-8 rounded-lg shadow-xl w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-white">Becasa Backoffice</h1>
           <p className="text-primary mt-2">Inicia sesión para continuar</p>
@@ -46,7 +46,7 @@ export default function LoginPage() {
               type="email"
               id="email"
               {...formik.getFieldProps("email")}
-              className="mt-1 text-white block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400"
+              className="mt-1 text-black bg-[#fbffd4] block w-full px-3 py-2 border-none rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-gray-600"
               placeholder="correo@ejemplo.com"
             />
             {formik.touched.email && formik.errors.email && (
@@ -62,7 +62,7 @@ export default function LoginPage() {
               type="password"
               id="password"
               {...formik.getFieldProps("password")}
-              className="mt-1 text-white block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400"
+              className="mt-1 text-black bg-[#fbffd4] block w-full px-3 py-2 border-none rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-gray-600"
               placeholder="••••••••"
             />
             {formik.touched.password && formik.errors.password && (
@@ -73,7 +73,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={formik.isSubmitting}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:scale-105 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-[#17222d] bg-primary hover:scale-105 transition-transform cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {formik.isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}
           </button>
