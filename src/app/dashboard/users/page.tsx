@@ -15,7 +15,8 @@ export default async function Page() {
             'Accept': 'application/json',
             'Authorization': `Bearer ${token}`
         },
-        cache: 'no-store'
+        cache: 'force-cache',
+        next: { revalidate: 0 }
     });
     
     const responseData = await datos.json();
