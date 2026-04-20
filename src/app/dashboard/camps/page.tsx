@@ -2,19 +2,20 @@
 
 import { CampInterface } from '@/interfaces/camp.interface';
 import CreateCampModal from '@/components/camps/CreateCampModal';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { FaPlus, FaSearchLocation, FaUsers, FaCalendarAlt, FaTag, FaRunning } from 'react-icons/fa';
 
 export default function CampsPage() {
     const [camps, setCamps] = useState<CampInterface[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
-    const fetchCamps = async () => {
+    const fetchCamps = useCallback(async () => {
         setLoading(true);
         try {
             const res = await fetch('/api/camps');
             const data = await res.json();
-            // Manejar cualquier estructura de respuesta
+            
             if (Array.isArray(data)) {
                 setCamps(data);
             } else if (Array.isArray(data?.data)) {
@@ -24,78 +25,127 @@ export default function CampsPage() {
             } else {
                 setCamps([]);
             }
-        } catch {
+        } catch (error) {
+            console.error("Error fetching camps:", error);
             setCamps([]);
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchCamps();
-    }, []);
+    }, [fetchCamps]);
+
+    const formatDate = (dateString: string) => {
+        try {
+            return new Date(dateString).toLocaleDateString('es-CO', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+        } catch {
+            return dateString;
+        }
+    };
 
     return (
-        <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-secondary">Campamentos</h1>
+        <div className="space-y-6">
+            {/* Header Pro */}
+            <div className="flex justify-between items-center bg-secondary/40 backdrop-blur-md p-6 rounded-3xl border border-secondary-light shadow-xl">
+                <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center text-primary border border-primary/20">
+                        <FaSearchLocation size={20} />
+                    </div>
+                    <div>
+                        <h1 className="text-2xl font-black text-white tracking-tight">Campamentos</h1>
+                        <p className="text-muted text-sm font-medium">Gestiona las sedes y eventos deportivos</p>
+                    </div>
+                </div>
+                
                 <button
                     onClick={() => setShowModal(true)}
-                    className="bg-primary text-secondary font-bold px-4 py-2 rounded shadow hover:scale-105 transition-transform cursor-pointer"
+                    className="flex items-center gap-2 bg-primary text-secondary font-black px-6 py-3 rounded-2xl shadow-[0_4px_15px_rgba(175,255,0,0.3)] hover:scale-105 active:scale-95 transition-all"
                 >
-                    Crear Campamento
+                    <FaPlus size={14} />
+                    <span>Crear Campamento</span>
                 </button>
             </div>
 
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deporte</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fechas</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Capacidad</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Edades</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {loading ? (
-                            <tr>
-                                <td colSpan={6} className="text-center py-8 text-gray-500">Cargando campamentos...</td>
+            {/* List View Pro */}
+            <div className="bg-secondary/40 backdrop-blur-md rounded-3xl border border-secondary-light shadow-2xl overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr className="border-b border-secondary-light">
+                                <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest">Información General</th>
+                                <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest">Deporte</th>
+                                <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest text-center">Fechas</th>
+                                <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest text-center">Precio</th>
+                                <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest text-right">Cupos / Edad</th>
                             </tr>
-                        ) : camps.length === 0 ? (
-                            <tr>
-                                <td colSpan={6} className="text-center py-8 text-gray-500">No hay campamentos registrados.</td>
-                            </tr>
-                        ) : (
-                            camps.map((camp) => (
-                                <tr key={camp.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="font-medium text-gray-900">{camp.name}</div>
-                                        {camp.location && <div className="text-xs text-gray-500">{camp.location}</div>}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-gray-500">{(camp as unknown as Record<string, string>).sport_type ?? '-'}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-gray-500 text-sm">
-                                        {camp.start_date} → {camp.end_date}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-gray-500">
-                                        ${Number(camp.price).toLocaleString('es-CO')}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-gray-500">{camp.capacity}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-gray-500">
-                                        {(camp as unknown as Record<string, number>).min_age ?? '?'} - {(camp as unknown as Record<string, number>).max_age ?? '?'} años
+                        </thead>
+                        <tbody className="divide-y divide-secondary-light/30">
+                            {loading ? (
+                                Array(3).fill(0).map((_, i) => (
+                                    <tr key={i} className="animate-pulse">
+                                        <td colSpan={5} className="px-8 py-8 h-20 bg-secondary-light/10"></td>
+                                    </tr>
+                                ))
+                            ) : camps.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} className="px-8 py-20 text-center">
+                                        <div className="flex flex-col items-center gap-3 opacity-30">
+                                            <FaSearchLocation size={48} className="text-muted" />
+                                            <p className="text-xl font-bold text-muted">No hay campamentos registrados</p>
+                                        </div>
                                     </td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                            ) : (
+                                camps.map((camp) => (
+                                    <tr key={camp.id} className="hover:bg-primary/5 transition-colors group">
+                                        <td className="px-8 py-6">
+                                            <div className="font-black text-white text-lg group-hover:text-primary transition-colors">
+                                                {camp.name}
+                                            </div>
+                                            <div className="flex items-center gap-1.5 text-muted text-xs font-semibold mt-1">
+                                                <FaSearchLocation className="text-primary/40" />
+                                                {camp.location || 'Sede no especificada'}
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6">
+                                            <span className="inline-flex items-center gap-2 bg-secondary-light px-3 py-1 rounded-lg text-primary text-xs font-black uppercase tracking-tight">
+                                                <FaRunning />
+                                                {(camp as any).sport_type ?? camp.sport ?? 'General'}
+                                            </span>
+                                        </td>
+                                        <td className="px-8 py-6 text-center">
+                                            <div className="flex flex-col items-center">
+                                                <div className="text-white font-bold text-sm">{formatDate(camp.start_date)}</div>
+                                                <div className="text-muted text-[10px] uppercase font-black tracking-widest mt-1">Hasta {formatDate(camp.end_date)}</div>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6 text-center">
+                                            <div className="inline-block bg-primary/10 border border-primary/20 px-4 py-2 rounded-xl">
+                                                <span className="text-primary font-black text-lg">
+                                                    ${Number(camp.price).toLocaleString('es-CO')}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-6 text-right">
+                                            <div className="text-white font-bold">{camp.capacity} Cupos</div>
+                                            <div className="text-muted text-xs">{(camp as any).min_age || '8'} - {(camp as any).max_age || '17'} años</div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {showModal && (
                 <CreateCampModal
-                    token=""
                     onClose={() => setShowModal(false)}
                     onCreated={fetchCamps}
                 />
