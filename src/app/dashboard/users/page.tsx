@@ -1,8 +1,8 @@
-import UserCard from '@/components/users/UserCard';
 import { UserInterface } from '@/interfaces/user.interface';
 import { cookies } from 'next/headers';
 import React from 'react';
-import { FaUsers, FaUserGraduate } from 'react-icons/fa';
+import { FaUsers } from 'react-icons/fa';
+import UserTableClient from '@/components/users/UserTableClient';
 
 export default async function Page() {
     const cookiesResolved = await cookies();
@@ -45,7 +45,7 @@ export default async function Page() {
                 </div>
             </div>
 
-            {/* Grid View Pro */}
+            {/* Table View */}
             {users.length === 0 ? (
                 <div className="bg-secondary/40 backdrop-blur-md rounded-3xl border border-secondary-light p-20 text-center">
                     <div className="flex flex-col items-center gap-3 opacity-30">
@@ -54,11 +54,7 @@ export default async function Page() {
                     </div>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {users.map((user: UserInterface) => (
-                        <UserCard key={user.id} user={user} />
-                    ))}
-                </div>
+                <UserTableClient users={users} />
             )}
         </div>
     );

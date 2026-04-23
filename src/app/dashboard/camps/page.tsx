@@ -2,13 +2,15 @@
 
 import { CampInterface } from '@/interfaces/camp.interface';
 import CreateCampModal from '@/components/camps/CreateCampModal';
+import EditCampModal from '@/components/camps/EditCampModal';
 import React, { useEffect, useState, useCallback } from 'react';
-import { FaPlus, FaSearchLocation, FaUsers, FaCalendarAlt, FaTag, FaRunning } from 'react-icons/fa';
+import { FaPlus, FaSearchLocation, FaRunning, FaEdit } from 'react-icons/fa';
 
 export default function CampsPage() {
     const [camps, setCamps] = useState<CampInterface[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [campToEdit, setCampToEdit] = useState<CampInterface | null>(null);
 
     const fetchCamps = useCallback(async () => {
         setLoading(true);
@@ -83,6 +85,7 @@ export default function CampsPage() {
                                 <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest text-center">Fechas</th>
                                 <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest text-center">Precio</th>
                                 <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest text-right">Cupos / Edad</th>
+                                <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-secondary-light/30">
@@ -110,7 +113,8 @@ export default function CampsPage() {
                                             </div>
                                             <div className="flex items-center gap-1.5 text-muted text-xs font-semibold mt-1">
                                                 <FaSearchLocation className="text-primary/40" />
-                                                {camp.location || 'Sede no especificada'}
+                                                {(camp as any).city?.name ? `${(camp as any).city.name} - ` : ''}
+                                                {camp.address || camp.location || 'Sede no especificada'}
                                             </div>
                                         </td>
                                         <td className="px-8 py-6">
@@ -136,6 +140,17 @@ export default function CampsPage() {
                                             <div className="text-white font-bold">{camp.capacity} Cupos</div>
                                             <div className="text-muted text-xs">{(camp as any).min_age || '8'} - {(camp as any).max_age || '17'} años</div>
                                         </td>
+                                        <td className="px-8 py-6">
+                                            <div className="flex justify-center">
+                                                <button 
+                                                    onClick={() => setCampToEdit(camp)}
+                                                    className="w-10 h-10 bg-secondary-light/50 rounded-xl flex items-center justify-center text-primary border border-secondary-light hover:bg-primary hover:text-secondary transition-all"
+                                                    title="Editar campamento"
+                                                >
+                                                    <FaEdit size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))
                             )}
@@ -146,8 +161,17 @@ export default function CampsPage() {
 
             {showModal && (
                 <CreateCampModal
+                    token=""
                     onClose={() => setShowModal(false)}
                     onCreated={fetchCamps}
+                />
+            )}
+            
+            {campToEdit && (
+                <EditCampModal
+                    camp={campToEdit}
+                    onClose={() => setCampToEdit(null)}
+                    onUpdated={fetchCamps}
                 />
             )}
         </div>

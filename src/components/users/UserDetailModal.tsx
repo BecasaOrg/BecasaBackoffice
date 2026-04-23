@@ -57,7 +57,8 @@ export default function UserDetailModal({ user, onClose }: Props) {
                     <Field label="Fecha de nacimiento" value={user.birth_date} icon={<FaCalendar />} />
                     <Field label="Género" value={genderLabel} icon={<FaVenusMars />} />
                     <Field label="Deporte" value={user.sport} icon={<FaRunning />} />
-                    <Field label="País de nacimiento" value={user.birth_country} icon={<FaGlobe />} />
+                    <Field label="País de nacimiento" value={user.birth_country?.name || (user as any).birthCountry?.name} icon={<FaGlobe />} />
+                    <Field label="Ciudad" value={user.city?.name} icon={<FaGlobe />} />
                     <Field label="Año de graduación" value={user.graduation_year} icon={<FaSchool />} />
                     <Field label="Rol" value={user.role} icon={<FaUser />} />
                 </div>
