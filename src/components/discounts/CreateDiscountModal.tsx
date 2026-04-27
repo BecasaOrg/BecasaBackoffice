@@ -16,8 +16,29 @@ export default function CreateDiscountModal({ onClose, onCreated }: CreateDiscou
         discount_percentage: '',
         max_installments: '1',
         valid_until: '',
-        is_active: true
+        is_active: true,
+        user_id: ''
     });
+
+    const [users, setUsers] = useState<any[]>([]);
+    const [loadingUsers, setLoadingUsers] = useState(true);
+
+    React.useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const res = await fetch('/api/user');
+                const data = await res.json();
+                if (data.success) {
+                    setUsers(data.data.filter((u: any) => u.role === 'user'));
+                }
+            } catch (error) {
+                console.error("Error fetching users", error);
+            } finally {
+                setLoadingUsers(false);
+            }
+        };
+        fetchUsers();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -25,15 +46,21 @@ export default function CreateDiscountModal({ onClose, onCreated }: CreateDiscou
         setError(null);
 
         try {
+            const bodyData: any = {
+                ...formData,
+                discount_percentage: Number(formData.discount_percentage),
+                max_installments: Number(formData.max_installments),
+                valid_until: formData.valid_until || null
+            };
+
+            if (formData.user_id) {
+                bodyData.user_id = Number(formData.user_id);
+            }
+
             const res = await fetch('/api/discount-codes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...formData,
-                    discount_percentage: Number(formData.discount_percentage),
-                    max_installments: Number(formData.max_installments),
-                    valid_until: formData.valid_until || null
-                }),
+                body: JSON.stringify(bodyData),
             });
 
             const data = await res.json();
@@ -78,6 +105,22 @@ export default function CreateDiscountModal({ onClose, onCreated }: CreateDiscou
                             value={formData.code}
                             onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                         />
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-bold text-primary uppercase tracking-widest mb-1 ml-1">Asignar a Estudiante (Opcional)</label>
+                        <select
+                            className="w-full bg-[#fbffd4] text-secondary border-none rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-primary transition-all"
+                            value={formData.user_id}
+                            onChange={(e) => setFormData({ ...formData, user_id: e.target.value })}
+                        >
+                            <option value="">Para cualquier estudiante (Público)</option>
+                            {!loadingUsers && users.map((user) => (
+                                <option key={user.id} value={user.id}>
+                                    {user.first_name} {user.last_name} ({user.email})
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
