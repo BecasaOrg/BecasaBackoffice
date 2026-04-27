@@ -37,6 +37,10 @@ export default function CreateCampModal({ token, onClose, onCreated }: Props) {
         sport_type: '',
         city_id: '',
         address: '',
+        schedule: '',
+        registration_start_date: '',
+        registration_end_date: '',
+        extraordinary_price: '',
     });
 
     // Cargar ciudades al abrir el modal
@@ -70,6 +74,7 @@ export default function CreateCampModal({ token, onClose, onCreated }: Props) {
                 body: JSON.stringify({
                     ...form,
                     price: parseFloat(form.price),
+                    extraordinary_price: form.extraordinary_price ? parseFloat(form.extraordinary_price) : null,
                     capacity: parseInt(form.capacity),
                     min_age: parseInt(form.min_age),
                     max_age: parseInt(form.max_age),
@@ -119,7 +124,7 @@ export default function CreateCampModal({ token, onClose, onCreated }: Props) {
                         <textarea name="description" value={form.description} onChange={handle} rows={3} className={inputClass} placeholder="Descripción del campamento..." />
                     </div>
 
-                    {/* Fechas */}
+                    {/* Fechas Generales */}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className={labelClass}>Fecha de inicio *</label>
@@ -131,11 +136,27 @@ export default function CreateCampModal({ token, onClose, onCreated }: Props) {
                         </div>
                     </div>
 
-                    {/* Precio y Capacidad */}
+                    {/* Fechas de Inscripción */}
                     <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className={labelClass}>Inicio Inscripciones</label>
+                            <input type="date" name="registration_start_date" value={form.registration_start_date} onChange={handle} className={inputClass} />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Fin Inscripciones</label>
+                            <input type="date" name="registration_end_date" value={form.registration_end_date} onChange={handle} className={inputClass} />
+                        </div>
+                    </div>
+
+                    {/* Precio y Capacidad */}
+                    <div className="grid grid-cols-3 gap-4">
                         <div>
                             <label className={labelClass}>Precio (COP) *</label>
                             <input type="number" name="price" required min="0" value={form.price} onChange={handle} className={inputClass} placeholder="Ej: 500000" />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Precio Extraordinario</label>
+                            <input type="number" name="extraordinary_price" min="0" value={form.extraordinary_price} onChange={handle} className={inputClass} placeholder="Ej: 600000" />
                         </div>
                         <div>
                             <label className={labelClass}>Capacidad *</label>
@@ -184,10 +205,16 @@ export default function CreateCampModal({ token, onClose, onCreated }: Props) {
                         </div>
                     </div>
 
-                    {/* Dirección */}
-                    <div>
-                        <label className={labelClass}>Dirección</label>
-                        <input name="address" value={form.address} onChange={handle} className={inputClass} placeholder="Ej: Calle 123 # 45-67" />
+                    {/* Dirección y Horario */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className={labelClass}>Dirección</label>
+                            <input name="address" value={form.address} onChange={handle} className={inputClass} placeholder="Ej: Calle 123 # 45-67" />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Horario</label>
+                            <input name="schedule" value={form.schedule} onChange={handle} className={inputClass} placeholder="Ej: 8:00a.m. a 4:00p.m." />
+                        </div>
                     </div>
 
                     {/* Footer */}
