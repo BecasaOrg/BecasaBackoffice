@@ -82,7 +82,8 @@ export default function CampsPage() {
                             <tr className="border-b border-secondary-light">
                                 <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest">Información General</th>
                                 <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest">Deporte</th>
-                                <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest text-center">Fechas</th>
+                                <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest text-center">Fechas Camp</th>
+                                <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest text-center">Inscripciones</th>
                                 <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest text-center">Precio</th>
                                 <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest text-right">Cupos / Edad</th>
                                 <th className="px-8 py-5 text-xs font-bold text-primary uppercase tracking-widest text-center">Acciones</th>
@@ -92,12 +93,12 @@ export default function CampsPage() {
                             {loading ? (
                                 Array(3).fill(0).map((_, i) => (
                                     <tr key={i} className="animate-pulse">
-                                        <td colSpan={5} className="px-8 py-8 h-20 bg-secondary-light/10"></td>
+                                        <td colSpan={6} className="px-8 py-8 h-20 bg-secondary-light/10"></td>
                                     </tr>
                                 ))
                             ) : camps.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="px-8 py-20 text-center">
+                                    <td colSpan={6} className="px-8 py-20 text-center">
                                         <div className="flex flex-col items-center gap-3 opacity-30">
                                             <FaSearchLocation size={48} className="text-muted" />
                                             <p className="text-xl font-bold text-muted">No hay campamentos registrados</p>
@@ -113,14 +114,15 @@ export default function CampsPage() {
                                             </div>
                                             <div className="flex items-center gap-1.5 text-muted text-xs font-semibold mt-1">
                                                 <FaSearchLocation className="text-primary/40" />
-                                                {(camp as any).city?.name ? `${(camp as any).city.name} - ` : ''}
+                                                {camp.city?.name ? `${camp.city.name} - ` : ''}
                                                 {camp.address || camp.location || 'Sede no especificada'}
+
                                             </div>
                                         </td>
                                         <td className="px-8 py-6">
                                             <span className="inline-flex items-center gap-2 bg-secondary-light px-3 py-1 rounded-lg text-primary text-xs font-black uppercase tracking-tight">
                                                 <FaRunning />
-                                                {(camp as any).sport_type ?? camp.sport ?? 'General'}
+                                                {camp.sport_type ?? camp.sport ?? 'General'}
                                             </span>
                                         </td>
                                         <td className="px-8 py-6 text-center">
@@ -130,15 +132,41 @@ export default function CampsPage() {
                                             </div>
                                         </td>
                                         <td className="px-8 py-6 text-center">
-                                            <div className="inline-block bg-primary/10 border border-primary/20 px-4 py-2 rounded-xl">
-                                                <span className="text-primary font-black text-lg">
-                                                    ${Number(camp.price).toLocaleString('es-CO')}
-                                                </span>
+                                            {camp.registration_start_date ? (
+                                                <div className="flex flex-col items-center">
+                                                    <div className="flex items-center gap-1 text-white font-bold text-sm">
+                                                        <FaCalendarAlt className="text-primary/60" size={11} />
+                                                        {formatDate(camp.registration_start_date)}
+                                                    </div>
+                                                    {camp.registration_end_date && (
+                                                        <div className="text-muted text-[10px] uppercase font-black tracking-widest mt-1">Hasta {formatDate(camp.registration_end_date)}</div>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <span className="text-muted text-xs">—</span>
+                                            )}
+                                        </td>
+                                        <td className="px-8 py-6 text-center">
+                                            <div className="flex flex-col items-center gap-1">
+                                                <div className="inline-block bg-primary/10 border border-primary/20 px-4 py-2 rounded-xl">
+                                                    <div className="text-muted text-[10px] uppercase tracking-widest">Normal</div>
+                                                    <span className="text-primary font-black text-lg">
+                                                        ${Number(camp.price).toLocaleString('es-CO')}
+                                                    </span>
+                                                </div>
+                                                {camp.extraordinary_price && (
+                                                    <div className="inline-block bg-yellow-500/10 border border-yellow-500/20 px-3 py-1 rounded-xl">
+                                                        <div className="text-yellow-400/60 text-[10px] uppercase tracking-widest">Extraordinario</div>
+                                                        <span className="text-yellow-400 font-black text-sm">
+                                                            ${Number(camp.extraordinary_price).toLocaleString('es-CO')}
+                                                        </span>
+                                                    </div>
+                                                )}
                                             </div>
                                         </td>
                                         <td className="px-8 py-6 text-right">
                                             <div className="text-white font-bold">{camp.capacity} Cupos</div>
-                                            <div className="text-muted text-xs">{(camp as any).min_age || '8'} - {(camp as any).max_age || '17'} años</div>
+                                            <div className="text-muted text-xs">{camp.min_age || '8'} - {camp.max_age || '17'} años</div>
                                         </td>
                                         <td className="px-8 py-6">
                                             <div className="flex justify-center">

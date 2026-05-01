@@ -91,7 +91,6 @@ const QuickAction = ({ title, href, description }: { title: string; href: string
     </Link>
 );
 
-export const revalidate = 30;
 
 export default async function DashboardPage() {
     const stats = await getStats();

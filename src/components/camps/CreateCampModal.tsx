@@ -10,7 +10,6 @@ interface City {
 }
 
 interface Props {
-    token: string;
     onClose: () => void;
     onCreated: () => void;
 }
@@ -19,7 +18,7 @@ const inputClass = "w-full bg-secondary-light text-white placeholder:text-muted 
 const selectClass = "w-full bg-secondary-light text-white border border-secondary-light rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary";
 const labelClass = "block text-xs text-muted uppercase tracking-wide mb-1";
 
-export default function CreateCampModal({ token, onClose, onCreated }: Props) {
+export default function CreateCampModal({ onClose, onCreated }: Props) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [cities, setCities] = useState<City[]>([]);
@@ -30,7 +29,12 @@ export default function CreateCampModal({ token, onClose, onCreated }: Props) {
         description: '',
         start_date: '',
         end_date: '',
+        registration_start_date: '',
+        registration_end_date: '',
         price: '',
+        extraordinary_price: '',
+        normal_price_text: '',
+        extraordinary_price_text: '',
         capacity: '',
         min_age: '',
         max_age: '',
@@ -38,9 +42,6 @@ export default function CreateCampModal({ token, onClose, onCreated }: Props) {
         city_id: '',
         address: '',
         schedule: '',
-        registration_start_date: '',
-        registration_end_date: '',
-        extraordinary_price: '',
     });
 
     // Cargar ciudades al abrir el modal
@@ -74,7 +75,8 @@ export default function CreateCampModal({ token, onClose, onCreated }: Props) {
                 body: JSON.stringify({
                     ...form,
                     price: parseFloat(form.price),
-                    extraordinary_price: form.extraordinary_price ? parseFloat(form.extraordinary_price) : null,
+                    extraordinary_price: form.extraordinary_price ? parseFloat(form.extraordinary_price) : undefined,
+
                     capacity: parseInt(form.capacity),
                     min_age: parseInt(form.min_age),
                     max_age: parseInt(form.max_age),
@@ -124,7 +126,7 @@ export default function CreateCampModal({ token, onClose, onCreated }: Props) {
                         <textarea name="description" value={form.description} onChange={handle} rows={3} className={inputClass} placeholder="Descripción del campamento..." />
                     </div>
 
-                    {/* Fechas Generales */}
+                    {/* Fechas del Camp */}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className={labelClass}>Fecha de inicio *</label>
@@ -137,31 +139,49 @@ export default function CreateCampModal({ token, onClose, onCreated }: Props) {
                     </div>
 
                     {/* Fechas de Inscripción */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className={labelClass}>Inicio Inscripciones</label>
-                            <input type="date" name="registration_start_date" value={form.registration_start_date} onChange={handle} className={inputClass} />
-                        </div>
-                        <div>
-                            <label className={labelClass}>Fin Inscripciones</label>
-                            <input type="date" name="registration_end_date" value={form.registration_end_date} onChange={handle} className={inputClass} />
+                    <div>
+                        <p className="text-xs text-primary uppercase tracking-widest font-bold mb-2 border-b border-primary/20 pb-1">Período de Inscripción</p>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className={labelClass}>Inicio inscripciones</label>
+                                <input type="date" name="registration_start_date" value={form.registration_start_date} onChange={handle} className={inputClass} />
+                            </div>
+                            <div>
+                                <label className={labelClass}>Fin inscripciones</label>
+                                <input type="date" name="registration_end_date" value={form.registration_end_date} onChange={handle} className={inputClass} />
+                            </div>
                         </div>
                     </div>
 
-                    {/* Precio y Capacidad */}
-                    <div className="grid grid-cols-3 gap-4">
-                        <div>
-                            <label className={labelClass}>Precio (COP) *</label>
-                            <input type="number" name="price" required min="0" value={form.price} onChange={handle} className={inputClass} placeholder="Ej: 500000" />
+                    {/* Precios */}
+                    <div>
+                        <p className="text-xs text-primary uppercase tracking-widest font-bold mb-2 border-b border-primary/20 pb-1">Precios</p>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className={labelClass}>Precio normal (COP) *</label>
+                                <input type="number" name="price" required min="0" value={form.price} onChange={handle} className={inputClass} placeholder="Ej: 500000" />
+                            </div>
+                            <div>
+                                <label className={labelClass}>Precio extraordinario (COP)</label>
+                                <input type="number" name="extraordinary_price" min="0" value={form.extraordinary_price} onChange={handle} className={inputClass} placeholder="Ej: 600000" />
+                            </div>
                         </div>
-                        <div>
-                            <label className={labelClass}>Precio Extraordinario</label>
-                            <input type="number" name="extraordinary_price" min="0" value={form.extraordinary_price} onChange={handle} className={inputClass} placeholder="Ej: 600000" />
+                        <div className="grid grid-cols-2 gap-4 mt-3">
+                            <div>
+                                <label className={labelClass}>Texto precio normal</label>
+                                <input name="normal_price_text" value={form.normal_price_text} onChange={handle} className={inputClass} placeholder="Ej: Hasta el 30 de abril" />
+                            </div>
+                            <div>
+                                <label className={labelClass}>Texto precio extraordinario</label>
+                                <input name="extraordinary_price_text" value={form.extraordinary_price_text} onChange={handle} className={inputClass} placeholder="Ej: Del 1 al 15 de mayo" />
+                            </div>
                         </div>
-                        <div>
-                            <label className={labelClass}>Capacidad *</label>
-                            <input type="number" name="capacity" required min="1" value={form.capacity} onChange={handle} className={inputClass} placeholder="Ej: 30" />
-                        </div>
+                    </div>
+
+                    {/* Capacidad */}
+                    <div>
+                        <label className={labelClass}>Capacidad *</label>
+                        <input type="number" name="capacity" required min="1" value={form.capacity} onChange={handle} className={inputClass} placeholder="Ej: 30" />
                     </div>
 
                     {/* Edades */}

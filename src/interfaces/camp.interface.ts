@@ -12,6 +12,9 @@ export interface CampInterface {
     registration_end_date?: string;
     price: string | number;
     extraordinary_price?: string | number;
+    normal_price_text?: string;
+    extraordinary_price_text?: string;
+
     capacity: number;
     min_age?: number;
     max_age?: number;
@@ -20,4 +23,5 @@ export interface CampInterface {
     created_at: string;
     updated_at: string;
     sport?: string;
+    city?: { id: number; name: string };
 }
