@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
 import { loginSchema } from "@/schemas/loginSchema";
 import { loginAction } from "@/actions/login.action";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,6 +17,9 @@ export default function LoginPage() {
     validationSchema: loginSchema,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       const result = await loginAction(values);
+      if(result.data.role !== "admin"){
+        toast("Acceso denegado", { icon: "🚫", style: { backgroundColor: "red" } });
+      }
       if (result.success || result.data.role === "admin") {
         router.push("/dashboard");
       } else {
