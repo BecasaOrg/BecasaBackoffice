@@ -50,6 +50,8 @@ export default function CreateCampModal({ onClose, onCreated }: Props) {
         description: '',
         start_date: '',
         end_date: '',
+        start_time: '',
+        end_time: '',
         registration_start_date: '',
         registration_end_date: '',
         price: '',
@@ -184,15 +186,28 @@ export default function CreateCampModal({ onClose, onCreated }: Props) {
                         <textarea name="description" value={form.description} onChange={handle} rows={3} className={inputClass} placeholder="Descripción del campamento..." />
                     </div>
 
-                    {/* Fechas del Camp */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className={labelClass}>Fecha de inicio *</label>
-                            <input type="date" name="start_date" required value={form.start_date} onChange={handle} className={inputClass} />
+                    {/* Fechas y Horarios del Camp */}
+                    <div>
+                        <p className="text-xs text-primary uppercase tracking-widest font-bold mb-2 border-b border-primary/20 pb-1">Fechas y Horarios</p>
+                        <div className="grid grid-cols-2 gap-4 mb-3">
+                            <div>
+                                <label className={labelClass}>Fecha de inicio *</label>
+                                <input type="date" name="start_date" required value={form.start_date} onChange={handle} className={inputClass} />
+                            </div>
+                            <div>
+                                <label className={labelClass}>Fecha de fin *</label>
+                                <input type="date" name="end_date" required value={form.end_date} onChange={handle} className={inputClass} />
+                            </div>
                         </div>
-                        <div>
-                            <label className={labelClass}>Fecha de fin *</label>
-                            <input type="date" name="end_date" required value={form.end_date} onChange={handle} className={inputClass} />
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className={labelClass}>Hora de inicio</label>
+                                <input type="time" name="start_time" value={form.start_time} onChange={handle} className={inputClass} />
+                            </div>
+                            <div>
+                                <label className={labelClass}>Hora de fin</label>
+                                <input type="time" name="end_time" value={form.end_time} onChange={handle} className={inputClass} />
+                            </div>
                         </div>
                     </div>
 
