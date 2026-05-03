@@ -17,10 +17,11 @@ export default function LoginPage() {
     validationSchema: loginSchema,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       const result = await loginAction(values);
-      if(result.data.role !== "admin"){
-        toast("Acceso denegado", { icon: "🚫", style: { backgroundColor: "red" } });
+      console.log(result);
+      if (result.data.user.role !== "admin") {
+        toast("Acceso denegado", { icon: "🚫", style: { backgroundColor: "red", color: 'white' } });
       }
-      if (result.success || result.data.role === "admin") {
+      if (result.success && result.data.user.role === "admin") {
         router.push("/dashboard");
       } else {
         if (result.errors) {
