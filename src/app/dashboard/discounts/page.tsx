@@ -92,9 +92,20 @@ export default function DiscountsPage() {
                                 discounts.map((discount) => (
                                     <tr key={discount.id} className="hover:bg-primary/5 transition-colors group">
                                         <td className="px-8 py-6">
-                                            <span className="font-black text-white text-lg tracking-wider bg-secondary-light px-3 py-1 rounded-lg group-hover:bg-primary/20 group-hover:text-primary transition-all">
-                                                {discount.code}
-                                            </span>
+                                            <div className="flex flex-col gap-2">
+                                                <span className="font-black text-white text-lg tracking-wider bg-secondary-light px-3 py-1 rounded-lg w-max group-hover:bg-primary/20 group-hover:text-primary transition-all">
+                                                    {discount.code}
+                                                </span>
+                                                {discount.user ? (
+                                                    <span className="text-xs text-muted font-medium bg-secondary-light/50 px-2 py-1 rounded w-max">
+                                                        👤 {discount.user.first_name} {discount.user.last_name}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-xs text-muted/50 font-medium px-2 py-1">
+                                                        🌐 Público
+                                                    </span>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="px-8 py-6 text-center">
                                             <span className="text-2xl font-black text-white">{discount.discount_percentage}%</span>

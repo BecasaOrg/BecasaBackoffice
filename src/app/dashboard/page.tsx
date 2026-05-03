@@ -30,7 +30,7 @@ const getData = (data: any) => {
 async function getStats() {
     const cookieStore = await cookies();
     const token = cookieStore.get("auth_token")?.value;
-    
+
     if (!token) {
         return { users: 0, camps: 0, registrations: 0, discounts: 0, recentActivity: [] };
     }
@@ -91,7 +91,6 @@ const QuickAction = ({ title, href, description }: { title: string; href: string
     </Link>
 );
 
-export const revalidate = 30;
 
 export default async function DashboardPage() {
     const stats = await getStats();
@@ -100,7 +99,7 @@ export default async function DashboardPage() {
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
             <div className="relative bg-gradient-to-br from-secondary/60 to-secondary/20 backdrop-blur-md p-8 rounded-[2.5rem] border border-secondary-light overflow-hidden shadow-2xl">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
-                
+
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="text-center md:text-left">
                         <span className="bg-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1 rounded-full border border-primary/20">
