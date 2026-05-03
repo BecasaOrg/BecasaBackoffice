@@ -159,9 +159,9 @@ export default function UserTableClient({ users }: Props) {
                                                 >
                                                     <FaEye size={14} />
                                                 </button>
-                                                <button className='w-9 h-9 bg-secondary-light rounded-xl flex items-center justify-center text-primary border border-secondary-light hover:bg-primary hover:text-secondary transition-all'>
+                                                {/* <button className='w-9 h-9 bg-secondary-light rounded-xl flex items-center justify-center text-primary border border-secondary-light hover:bg-primary hover:text-secondary transition-all'>
                                                     <FaTrash size={14} />
-                                                </button>
+                                                </button> */}
                                             </div>
                                         </td>
                                     </tr>
