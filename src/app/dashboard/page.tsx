@@ -42,7 +42,7 @@ async function getStats() {
     };
 
     const [usersRes, campsRes, regsRes, discountsRes] = await Promise.all([
-        fetch(`${process.env.API_URL}/user`, { headers, next: { revalidate: 60 } }),
+        fetch(`${process.env.API_URL}/users`, { headers, next: { revalidate: 60 } }),
         fetch(`${process.env.API_URL}/camps`, { headers, next: { revalidate: 60 } }),
         fetch(`${process.env.API_URL}/registrations`, { headers, next: { revalidate: 30 } }),
         fetch(`${process.env.API_URL}/discount-codes`, { headers, next: { revalidate: 60 } }),
