@@ -213,7 +213,12 @@ export default function CreateCampModal({ onClose, onCreated }: Props) {
                             {/* <input name="sport_type" required value={form.sport_type} onChange={handle} className={inputClass} placeholder="Ej: Fútbol" />
                              */}
 
-                            <select className='w-full py-2 bg-secondary-light rounded-[7px]' name="" id="">
+                            <select 
+                                className='w-full py-2 bg-secondary-light rounded-[7px]' 
+                                name="sport_type" 
+                                value={form.sport_type} 
+                                onChange={handle}
+                            >
                                  {Object.entries(mapDeporte).map(([value, label]) => (
                                      <option key={value} value={value}>{label}</option>
                                  ))}
