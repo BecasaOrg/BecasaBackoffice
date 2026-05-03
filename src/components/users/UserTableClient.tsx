@@ -2,7 +2,7 @@
 
 import { UserInterface } from '@/interfaces/user.interface';
 import React, { useState, useMemo } from 'react';
-import { FaEye, FaSearch, FaFilter, FaRunning, FaVenusMars } from 'react-icons/fa';
+import { FaEye, FaSearch, FaFilter, FaRunning, FaVenusMars, FaTrash } from 'react-icons/fa';
 import UserDetailModal from './UserDetailModal';
 
 interface Props {
@@ -29,10 +29,10 @@ export default function UserTableClient({ users }: Props) {
     // Filter users
     const filteredUsers = useMemo(() => {
         return users.filter(user => {
-            const matchesSearch = 
+            const matchesSearch =
                 `${user.name} ${user.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 user.email.toLowerCase().includes(searchTerm.toLowerCase());
-            
+
             const matchesSport = sportFilter ? user.sport === sportFilter : true;
             const matchesGender = genderFilter ? user.gender === genderFilter : true;
 
@@ -54,7 +54,7 @@ export default function UserTableClient({ users }: Props) {
                         className="w-full bg-secondary-light/30 border border-secondary-light rounded-xl pl-11 pr-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all placeholder:text-muted/70"
                     />
                 </div>
-                
+
                 <div className="flex w-full md:w-auto gap-4">
                     <div className="relative w-full md:w-48">
                         <FaRunning className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/60" />
@@ -114,8 +114,8 @@ export default function UserTableClient({ users }: Props) {
                                 </tr>
                             ) : (
                                 filteredUsers.map((user) => (
-                                    <tr 
-                                        key={user.id} 
+                                    <tr
+                                        key={user.id}
                                         className="hover:bg-secondary-light/20 transition-colors group"
                                     >
                                         <td className="px-6 py-4">
@@ -152,12 +152,15 @@ export default function UserTableClient({ users }: Props) {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex justify-center">
-                                                <button 
+                                                <button
                                                     onClick={() => setSelectedUser(user)}
                                                     className="w-9 h-9 bg-secondary-light rounded-xl flex items-center justify-center text-primary border border-secondary-light hover:bg-primary hover:text-secondary transition-all"
                                                     title="Ver detalles"
                                                 >
                                                     <FaEye size={14} />
+                                                </button>
+                                                <button className='w-9 h-9 bg-secondary-light rounded-xl flex items-center justify-center text-primary border border-secondary-light hover:bg-primary hover:text-secondary transition-all'>
+                                                    <FaTrash size={14} />
                                                 </button>
                                             </div>
                                         </td>

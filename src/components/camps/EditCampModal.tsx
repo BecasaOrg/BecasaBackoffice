@@ -16,6 +16,16 @@ interface Props {
     onUpdated: () => void;
 }
 
+const mapDeporte: Record<string, string> = {
+  "football": "Fútbol",
+  "volleyball": "Volleyball",
+  "swimming": "Natación",
+  "tennis": "Tenis",
+  "athletics": "Atletismo",
+  "baseball": "Baseball",
+  "basketball": "Basketball"
+};
+
 const inputClass = "w-full bg-secondary-light text-white placeholder:text-muted border border-secondary-light rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary";
 const selectClass = "w-full bg-secondary-light text-white border border-secondary-light rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary";
 const labelClass = "block text-xs text-muted uppercase tracking-wide mb-1";
@@ -160,7 +170,13 @@ export default function EditCampModal({ camp, onClose, onUpdated }: Props) {
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className={labelClass}>Tipo de deporte *</label>
-                            <input name="sport_type" required value={form.sport_type} onChange={handle} className={inputClass} placeholder="Ej: Fútbol" />
+                            {/* <input name="sport_type" required value={form.sport_type} onChange={handle} className={inputClass} placeholder="Ej: Fútbol" />
+                             */}
+                            <select className='w-full py-2 bg-secondary-light rounded-[7px]' name="" id="">
+                                 {Object.entries(mapDeporte).map(([value, label]) => (
+                                     <option key={value} value={value}>{label}</option>
+                                 ))}
+                             </select>
                         </div>
                         <div>
                             <label className={labelClass}>Ciudad *</label>
