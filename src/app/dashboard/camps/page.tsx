@@ -4,7 +4,7 @@ import { CampInterface } from '@/interfaces/camp.interface';
 import CreateCampModal from '@/components/camps/CreateCampModal';
 import EditCampModal from '@/components/camps/EditCampModal';
 import React, { useEffect, useState, useCallback } from 'react';
-import { FaPlus, FaSearchLocation, FaRunning, FaEdit } from 'react-icons/fa';
+import { FaPlus, FaSearchLocation, FaRunning, FaEdit, FaCalendarAlt } from 'react-icons/fa';
 
 export default function CampsPage() {
     const [camps, setCamps] = useState<CampInterface[]>([]);
