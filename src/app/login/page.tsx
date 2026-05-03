@@ -5,9 +5,11 @@ import { useFormik } from "formik";
 import { loginSchema } from "@/schemas/loginSchema";
 import { loginAction } from "@/actions/login.action";
 import toast from "react-hot-toast";
+import { useState } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
   const formik = useFormik({
     initialValues: {
@@ -18,6 +20,9 @@ export default function LoginPage() {
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       const result = await loginAction(values);
       console.log(result);
+      if(!result.success) {
+        setError(result.message);
+      }
       if (result.data.user.role !== "admin") {
         toast("Acceso denegado", { icon: "🚫", style: { backgroundColor: "red", color: 'white' } });
       }
@@ -40,6 +45,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-white">Becasa Backoffice</h1>
           <p className="text-primary mt-2">Inicia sesión para continuar</p>
+          {error && <p className="text-red-600 mt-2">{error}</p>}
         </div>
 
         <form onSubmit={formik.handleSubmit} className="space-y-6">
@@ -51,6 +57,10 @@ export default function LoginPage() {
               type="email"
               id="email"
               {...formik.getFieldProps("email")}
+              onChange={(e) => {
+                setError(null);
+                formik.handleChange(e);
+              }}
               className="mt-1 text-black bg-[#fbffd4] block w-full px-3 py-2 border-none rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-gray-600"
               placeholder="correo@ejemplo.com"
             />
@@ -67,6 +77,10 @@ export default function LoginPage() {
               type="password"
               id="password"
               {...formik.getFieldProps("password")}
+              onChange={(e) => {
+                setError(null);
+                formik.handleChange(e);
+              }}
               className="mt-1 text-black bg-[#fbffd4] block w-full px-3 py-2 border-none rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-gray-600"
               placeholder="••••••••"
             />
