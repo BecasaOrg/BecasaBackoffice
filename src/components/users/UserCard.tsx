@@ -42,9 +42,9 @@ export default function UserCard({ user }: Props) {
                             <button className="w-10 h-10 bg-secondary-light rounded-xl flex items-center justify-center text-primary border border-secondary-light hover:bg-primary hover:text-secondary transition-all">
                                 <FaEye size={16} />
                             </button>
-                            <button className="w-10 h-10 bg-secondary-light rounded-xl flex items-center justify-center text-red-400 border border-secondary-light hover:bg-red-500 hover:text-white transition-all">
+                            {/* <button className="w-10 h-10 bg-secondary-light rounded-xl flex items-center justify-center text-red-400 border border-secondary-light hover:bg-red-500 hover:text-white transition-all">
                                 <FaTrash size={14} />
-                            </button>
+                            </button> */}
                         </div>
                     </div>
 
