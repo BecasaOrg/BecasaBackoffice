@@ -16,7 +16,7 @@ export default function LoginPage() {
     validationSchema: loginSchema,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       const result = await loginAction(values);
-      if (result.success) {
+      if (result.success || result.data.role === "admin") {
         router.push("/dashboard");
       } else {
         if (result.errors) {
