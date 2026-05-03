@@ -8,7 +8,7 @@ export default async function Page() {
     const cookiesResolved = await cookies();
     const token = cookiesResolved.get('auth_token')?.value;
 
-    const datos = await fetch(`${process.env.API_URL}/user`, {
+    const datos = await fetch(`${process.env.API_URL}/users`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

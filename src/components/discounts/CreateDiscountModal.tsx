@@ -26,8 +26,9 @@ export default function CreateDiscountModal({ onClose, onCreated }: CreateDiscou
     React.useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const res = await fetch('/api/user');
+                const res = await fetch('/api/users');
                 const data = await res.json();
+                console.log(data);
                 if (data.success) {
                     setUsers(data.data.filter((u: any) => u.role === 'user'));
                 }
