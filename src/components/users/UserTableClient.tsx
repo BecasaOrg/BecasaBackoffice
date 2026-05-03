@@ -15,11 +15,6 @@ export default function UserTableClient({ users }: Props) {
     const [genderFilter, setGenderFilter] = useState('');
     const [selectedUser, setSelectedUser] = useState<UserInterface | null>(null);
 
-    // DEBUG: Ver qué llega exactamente
-    if (users.length > 0) {
-        console.log('DEBUG USER DATA:', users[0]);
-    }
-
     // Get unique sports for the filter dropdown
     const uniqueSports = useMemo(() => {
         const sports = users.map(user => user.sport).filter(Boolean);

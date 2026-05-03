@@ -9,6 +9,11 @@ interface City {
     state?: { name: string };
 }
 
+interface SelectItem {
+    id: number | string;
+    name: string;
+}
+
 interface Props {
     onClose: () => void;
     onCreated: () => void;
@@ -31,8 +36,14 @@ const labelClass = "block text-xs text-muted uppercase tracking-wide mb-1";
 export default function CreateCampModal({ onClose, onCreated }: Props) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [countries, setCountries] = useState<SelectItem[]>([]);
+    const [states, setStates] = useState<SelectItem[]>([]);
     const [cities, setCities] = useState<City[]>([]);
-    const [loadingCities, setLoadingCities] = useState(true);
+    const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+    const [selectedState, setSelectedState] = useState<string | null>(null);
+    const [loadingCountries, setLoadingCountries] = useState(true);
+    const [loadingStates, setLoadingStates] = useState(false);
+    const [loadingCities, setLoadingCities] = useState(false);
 
     const [form, setForm] = useState({
         name: '',
@@ -54,21 +65,59 @@ export default function CreateCampModal({ onClose, onCreated }: Props) {
         schedule: '',
     });
 
-    // Cargar ciudades al abrir el modal
+    // Cargar países al abrir el modal
     useEffect(() => {
-        const fetchCities = async () => {
+        const fetchCountries = async () => {
             try {
-                const res = await fetch('https://athleticscholarshipagency.com/api/cities');
+                const res = await fetch('https://athleticscholarshipagency.com/api/countries');
                 const data = await res.json();
-                setCities(data.data || data || []);
+                setCountries(data.data || data || []);
             } catch {
-                setCities([]);
+                setCountries([]);
             } finally {
-                setLoadingCities(false);
+                setLoadingCountries(false);
             }
         };
-        fetchCities();
+        fetchCountries();
     }, []);
+
+    // Cargar estados cuando se selecciona un país
+    useEffect(() => {
+        if (!selectedCountry) {
+            setStates([]);
+            setSelectedState(null);
+            setCities([]);
+            setForm(f => ({ ...f, city_id: '' }));
+            return;
+        }
+        setLoadingStates(true);
+        fetch(`https://athleticscholarshipagency.com/api/countries/${selectedCountry}/states`)
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) setStates(data);
+                else if (data.data && Array.isArray(data.data)) setStates(data.data);
+            })
+            .catch(() => setStates([]))
+            .finally(() => setLoadingStates(false));
+    }, [selectedCountry]);
+
+    // Cargar ciudades cuando se selecciona un estado
+    useEffect(() => {
+        if (!selectedState) {
+            setCities([]);
+            setForm(f => ({ ...f, city_id: '' }));
+            return;
+        }
+        setLoadingCities(true);
+        fetch(`https://athleticscholarshipagency.com/api/states/${selectedState}/cities`)
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) setCities(data);
+                else if (data.data && Array.isArray(data.data)) setCities(data.data);
+            })
+            .catch(() => setCities([]))
+            .finally(() => setLoadingCities(false));
+    }, [selectedState]);
 
     const handle = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setForm(f => ({ ...f, [e.target.name]: e.target.value }));
@@ -86,7 +135,6 @@ export default function CreateCampModal({ onClose, onCreated }: Props) {
                     ...form,
                     price: parseFloat(form.price),
                     extraordinary_price: form.extraordinary_price ? parseFloat(form.extraordinary_price) : undefined,
-
                     capacity: parseInt(form.capacity),
                     min_age: parseInt(form.min_age),
                     max_age: parseInt(form.max_age),
@@ -206,45 +254,87 @@ export default function CreateCampModal({ onClose, onCreated }: Props) {
                         </div>
                     </div>
 
-                    {/* Deporte y Ciudad */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className={labelClass}>Tipo de deporte *</label>
-                            {/* <input name="sport_type" required value={form.sport_type} onChange={handle} className={inputClass} placeholder="Ej: Fútbol" />
-                             */}
-
-                            <select 
-                                className='w-full py-2 bg-secondary-light rounded-[7px]' 
-                                name="sport_type" 
-                                value={form.sport_type} 
-                                onChange={handle}
-                            >
-                                 {Object.entries(mapDeporte).map(([value, label]) => (
-                                     <option key={value} value={value}>{label}</option>
-                                 ))}
-                             </select>
-                        </div>
-                        <div>
-                            <label className={labelClass}>Ciudad *</label>
-                            {loadingCities ? (
-                                <div className={`${inputClass} text-muted`}>Cargando ciudades...</div>
-                            ) : (
+                    {/* Deporte y Ubicación */}
+                    <div>
+                        <p className="text-xs text-primary uppercase tracking-widest font-bold mb-2 border-b border-primary/20 pb-1">Ubicación</p>
+                        <div className="grid grid-cols-3 gap-4">
+                            <div>
+                                <label className={labelClass}>País *</label>
+                                {loadingCountries ? (
+                                    <div className={`${inputClass} text-muted`}>Cargando...</div>
+                                ) : (
+                                    <select
+                                        required
+                                        value={selectedCountry || ''}
+                                        onChange={(e) => {
+                                            setSelectedCountry(e.target.value);
+                                            setSelectedState(null);
+                                            setForm(f => ({ ...f, city_id: '' }));
+                                        }}
+                                        className={selectClass}
+                                    >
+                                        <option value="">Selecciona un país</option>
+                                        {countries.map(c => (
+                                            <option key={c.id} value={c.id}>{c.name}</option>
+                                        ))}
+                                    </select>
+                                )}
+                            </div>
+                            <div>
+                                <label className={labelClass}>Estado / Departamento</label>
+                                <select
+                                    value={selectedState || ''}
+                                    onChange={(e) => {
+                                        setSelectedState(e.target.value);
+                                        setForm(f => ({ ...f, city_id: '' }));
+                                    }}
+                                    disabled={loadingStates || !selectedCountry}
+                                    className={selectClass}
+                                >
+                                    <option value="">
+                                        {loadingStates ? 'Cargando...' : selectedCountry ? 'Selecciona un estado' : 'Primero elige un país'}
+                                    </option>
+                                    {states.map(s => (
+                                        <option key={s.id} value={s.id}>{s.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className={labelClass}>Ciudad *</label>
                                 <select
                                     name="city_id"
                                     required
                                     value={form.city_id}
                                     onChange={handle}
+                                    disabled={loadingCities || !selectedState}
                                     className={selectClass}
                                 >
-                                    <option value="">Selecciona una ciudad</option>
+                                    <option value="">
+                                        {loadingCities ? 'Cargando...' : selectedState ? 'Selecciona una ciudad' : 'Primero elige un estado'}
+                                    </option>
                                     {cities.map(city => (
                                         <option key={city.id} value={city.id}>
-                                            {city.name}{city.state ? ` — ${city.state.name}` : ''}
+                                            {city.name}
                                         </option>
                                     ))}
                                 </select>
-                            )}
+                            </div>
                         </div>
+                    </div>
+
+                    {/* Deporte */}
+                    <div>
+                        <label className={labelClass}>Tipo de deporte *</label>
+                        <select 
+                            className='w-full py-2 bg-secondary-light rounded-[7px]' 
+                            name="sport_type" 
+                            value={form.sport_type} 
+                            onChange={handle}
+                        >
+                            {Object.entries(mapDeporte).map(([value, label]) => (
+                                <option key={value} value={value}>{label}</option>
+                            ))}
+                        </select>
                     </div>
 
                     {/* Dirección y Horario */}
