@@ -1,6 +1,6 @@
 import { RegistrationInterface } from '@/interfaces/registration.interface';
-import React from 'react';
-import { FaTimes, FaUser, FaUmbrellaBeach, FaPhone, FaEnvelope, FaIdCard, FaGraduationCap, FaHeartbeat, FaMoneyBillWave } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+import { FaTimes, FaUser, FaUmbrellaBeach, FaPhone, FaEnvelope, FaIdCard, FaGraduationCap, FaHeartbeat, FaMoneyBillWave, FaFilePdf } from 'react-icons/fa';
 
 interface Props {
     registration: RegistrationInterface;
@@ -8,6 +8,28 @@ interface Props {
 }
 
 export default function RegistrationDetailModal({ registration, onClose }: Props) {
+    const [fileUrl, setFileUrl] = useState<string | null>(null);
+    const [showPreview, setShowPreview] = useState(false);
+    
+
+    useEffect(() => {
+        if (!registration.health_insurance_path) return;
+
+        let objectUrl: string | null = null;
+
+        fetch(`/api/registrations/${registration.id}/file`)
+            .then(res => res.blob())
+            .then(blob => {
+                objectUrl = URL.createObjectURL(blob);
+                setFileUrl(objectUrl);
+            })
+            .catch(console.error);
+
+        return () => {
+            if (objectUrl) URL.revokeObjectURL(objectUrl);
+        };
+    }, [registration.id, registration.health_insurance_path]);
+
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('es-CO', {
             style: 'currency',
@@ -32,7 +54,7 @@ export default function RegistrationDetailModal({ registration, onClose }: Props
                             <p className="text-primary font-medium text-sm">Detalles del Registro #{registration.id}</p>
                         </div>
                     </div>
-                    <button 
+                    <button
                         onClick={onClose}
                         className="p-3 text-muted hover:text-white hover:bg-secondary-light rounded-xl transition-all"
                     >
@@ -43,7 +65,7 @@ export default function RegistrationDetailModal({ registration, onClose }: Props
                 {/* Body */}
                 <div className="p-6 overflow-y-auto custom-scrollbar">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
+
                         {/* Información del Deportista */}
                         <div className="bg-secondary-light/30 rounded-2xl p-5 border border-secondary-light/50">
                             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
@@ -79,11 +101,10 @@ export default function RegistrationDetailModal({ registration, onClose }: Props
                                 </h3>
                                 <div className="space-y-3">
                                     <DetailItem label="Estado" value={
-                                        <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${
-                                            registration.payment_status === 'pagado' || registration.payment_status === 'paid' 
-                                                ? 'bg-green-500/20 text-green-400' 
-                                                : 'bg-yellow-500/20 text-yellow-500'
-                                        }`}>
+                                        <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${registration.payment_status === 'pagado' || registration.payment_status === 'paid'
+                                            ? 'bg-green-500/20 text-green-400'
+                                            : 'bg-yellow-500/20 text-yellow-500'
+                                            }`}>
                                             {registration.payment_status}
                                         </span>
                                     } />
@@ -123,16 +144,44 @@ export default function RegistrationDetailModal({ registration, onClose }: Props
                                         {registration.medical_conditions || 'Ninguna'}
                                     </p>
                                 </div>
-                                {registration.health_insurance_path && (
-                                    <div className="pt-2">
-                                        <a 
-                                            href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/storage/${registration.health_insurance_path}`} 
-                                            target="_blank" 
-                                            rel="noreferrer"
-                                            className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-xl hover:bg-primary/20 transition-colors text-sm font-bold"
+                                {registration.health_insurance_path && fileUrl && (
+                                    <div className="pt-2 space-y-3">
+                                        <div className="bg-secondary/50 rounded-xl border border-secondary-light/30 overflow-hidden">
+                                            {showPreview ? (
+                                                <div className="relative">
+                                                    <embed
+                                                        src={fileUrl}
+                                                        type="application/pdf"
+                                                        className="w-full h-[400px]"
+                                                    />
+                                                    <button
+                                                        onClick={() => setShowPreview(false)}
+                                                        className="absolute top-2 right-2 p-2 bg-secondary/80 hover:bg-secondary text-muted hover:text-white rounded-lg transition-all"
+                                                    >
+                                                        <FaTimes size={14} />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    onClick={() => setShowPreview(true)}
+                                                    className="w-full flex items-center gap-3 px-4 py-6 hover:bg-primary/5 transition-colors group"
+                                                >
+                                                    <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary border border-primary/20 group-hover:scale-110 transition-transform">
+                                                        <FaFilePdf size={20} />
+                                                    </div>
+                                                    <div className="text-left">
+                                                        <p className="text-sm font-bold text-white">Certificado EPS</p>
+                                                        <p className="text-xs text-muted">Haz clic para previsualizar</p>
+                                                    </div>
+                                                </button>
+                                            )}
+                                        </div>
+                                        <button
+                                            onClick={() => window.open(fileUrl, '_blank', 'noopener,noreferrer')}
+                                            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-xl hover:bg-primary/20 transition-all text-sm font-bold"
                                         >
-                                            Ver Certificado EPS
-                                        </a>
+                                            <FaFilePdf /> Ver Certificado Completo
+                                        </button>
                                     </div>
                                 )}
                             </div>
