@@ -10,18 +10,22 @@ interface Props {
 export default function RegistrationDetailModal({ registration, onClose }: Props) {
     const [fileUrl, setFileUrl] = useState<string | null>(null);
     const [showPreview, setShowPreview] = useState(false);
+    const [loading, setLoading] = useState(false);
 
 
     useEffect(() => {
-        const getDocument = async () => {
-            const res = await fetch(`/api/registrations/${registration.id}/file`);
-            const blob = await res.blob();
-            console.log('blob es', blob)
-            const url = URL.createObjectURL(blob);
-            setFileUrl(url);
-        }
+        if (!registration.health_insurance_path) return;
 
-        getDocument();
+        setLoading(true);
+
+        fetch(`/api/registrations/${registration.id}/file`)
+            .then(res => res.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                setFileUrl(url);
+            })
+            .catch(console.error)
+            .finally(() => setLoading(false));
 
         return () => {
             if (fileUrl?.startsWith('blob:')) URL.revokeObjectURL(fileUrl);
@@ -125,7 +129,15 @@ export default function RegistrationDetailModal({ registration, onClose }: Props
                         </div>
 
                         {/* Información Médica */}
-                        <div className="bg-secondary-light/30 rounded-2xl p-5 border border-secondary-light/50">
+                        <div className="relative bg-secondary-light/30 rounded-2xl p-5 border border-secondary-light/50">
+                            {loading && registration.health_insurance_path && (
+                                <div className="absolute inset-0 bg-secondary-light/30 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
+                                    <div className="flex items-center gap-3 text-muted bg-secondary/80 px-6 py-4 rounded-2xl shadow-xl">
+                                        <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                                        <span className="text-sm font-medium">Cargando certificado...</span>
+                                    </div>
+                                </div>
+                            )}
                             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                                 <FaHeartbeat className="text-primary" /> Información Médica
                             </h3>
