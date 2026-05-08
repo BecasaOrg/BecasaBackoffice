@@ -3,10 +3,12 @@
 import { RegistrationInterface } from '@/interfaces/registration.interface';
 import React, { useEffect, useState, useCallback } from 'react';
 import { FaClipboardList, FaUser, FaUmbrellaBeach, FaCreditCard, FaChevronRight } from 'react-icons/fa';
+import RegistrationDetailModal from '@/components/registrations/RegistrationDetailModal';
 
 export default function RegistrationsPage() {
     const [registrations, setRegistrations] = useState<RegistrationInterface[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedRegistration, setSelectedRegistration] = useState<RegistrationInterface | null>(null);
 
     const fetchRegistrations = useCallback(async () => {
         setLoading(true);
@@ -116,7 +118,10 @@ export default function RegistrationsPage() {
                                             </span>
                                         </td>
                                         <td className="px-8 py-6 text-right">
-                                            <button className="p-2 bg-secondary-light rounded-xl text-primary hover:bg-primary hover:text-secondary hover:scale-110 transition-all">
+                                            <button 
+                                                onClick={() => setSelectedRegistration(reg)}
+                                                className="p-2 bg-secondary-light rounded-xl text-primary hover:bg-primary hover:text-secondary hover:scale-110 transition-all"
+                                            >
                                                 <FaChevronRight />
                                             </button>
                                         </td>
@@ -127,6 +132,13 @@ export default function RegistrationsPage() {
                     </table>
                 </div>
             </div>
+
+            {selectedRegistration && (
+                <RegistrationDetailModal 
+                    registration={selectedRegistration} 
+                    onClose={() => setSelectedRegistration(null)} 
+                />
+            )}
         </div>
     );
 }
