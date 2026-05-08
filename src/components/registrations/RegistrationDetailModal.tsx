@@ -142,7 +142,7 @@ export default function RegistrationDetailModal({ registration, onClose }: Props
                                         {registration.medical_conditions || 'Ninguna'}
                                     </p>
                                 </div>
-                                {fileUrl && (
+                                {fileUrl && registration.health_insurance_path && (
                                     <div className="pt-2 space-y-3">
                                         <div className="bg-secondary/50 rounded-xl border border-secondary-light/30 overflow-hidden">
                                             {showPreview ? (
