@@ -22,17 +22,53 @@ export async function GET(
 ) {
   const cookieStore = await cookies();
   const token = cookieStore.get("auth_token");
-  if (!token) return NextResponse.json({ message: "No autenticado" }, { status: 401 });
+
+  if (!token) {
+    return NextResponse.json(
+      { message: "No autenticado" },
+      { status: 401 }
+    );
+  }
 
   const { path } = await params;
   const url = `${process.env.API_URL}/${path.join("/")}`;
 
   try {
-    const response = await fetch(url, { method: "GET", headers: baseHeaders(token.value) });
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+        Accept: "*/*",
+      },
+    });
+
+    const contentType = response.headers.get("content-type");
+
+    if (
+      contentType?.includes("application/pdf") ||
+      contentType?.includes("application/octet-stream")
+    ) {
+      const blob = await response.blob();
+
+      return new NextResponse(blob, {
+        status: response.status,
+        headers: {
+          "Content-Type": contentType,
+        },
+      });
+    }
+
     const data = await parseResponse(response);
-    return NextResponse.json(data, { status: response.status });
+
+    return NextResponse.json(data, {
+      status: response.status,
+    });
+
   } catch (error) {
-    return NextResponse.json({ message: `Error de conexión: ${error}` }, { status: 500 });
+    return NextResponse.json(
+      { message: `Error de conexión: ${error}` },
+      { status: 500 }
+    );
   }
 }
 

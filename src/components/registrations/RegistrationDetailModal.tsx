@@ -10,23 +10,21 @@ interface Props {
 export default function RegistrationDetailModal({ registration, onClose }: Props) {
     const [fileUrl, setFileUrl] = useState<string | null>(null);
     const [showPreview, setShowPreview] = useState(false);
-    
+
 
     useEffect(() => {
-        if (!registration.health_insurance_path) return;
+        const getDocument = async () => {
+            const res = await fetch(`/api/registrations/${registration.id}/file`);
+            const blob = await res.blob();
+            console.log('blob es', blob)
+            const url = URL.createObjectURL(blob);
+            setFileUrl(url);
+        }
 
-        let objectUrl: string | null = null;
-
-        fetch(`/api/registrations/${registration.id}/file`)
-            .then(res => res.blob())
-            .then(blob => {
-                objectUrl = URL.createObjectURL(blob);
-                setFileUrl(objectUrl);
-            })
-            .catch(console.error);
+        getDocument();
 
         return () => {
-            if (objectUrl) URL.revokeObjectURL(objectUrl);
+            if (fileUrl?.startsWith('blob:')) URL.revokeObjectURL(fileUrl);
         };
     }, [registration.id, registration.health_insurance_path]);
 
@@ -144,7 +142,7 @@ export default function RegistrationDetailModal({ registration, onClose }: Props
                                         {registration.medical_conditions || 'Ninguna'}
                                     </p>
                                 </div>
-                                {registration.health_insurance_path && fileUrl && (
+                                {fileUrl && (
                                     <div className="pt-2 space-y-3">
                                         <div className="bg-secondary/50 rounded-xl border border-secondary-light/30 overflow-hidden">
                                             {showPreview ? (
