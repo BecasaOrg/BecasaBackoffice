@@ -113,7 +113,7 @@ export default function RegistrationsPage() {
                                                     : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
                                                 }`}>
                                                 <FaCreditCard />
-                                                {reg.payment_status?.toUpperCase() !== 'unpaid' ? 'Pagado' : 'Pendiente'}
+                                                {reg.payment_status == 'paid' ? 'Pagado' : 'Pendiente'}
                                             </span>
                                         </td>
                                         <td className="px-8 py-6 text-right">
