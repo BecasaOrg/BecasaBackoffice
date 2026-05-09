@@ -15,7 +15,7 @@ export default function RegistrationsPage() {
         try {
             const res = await fetch('/api/registrations');
             const data = await res.json();
-            
+
             // Robust parsing for various API responses
             if (Array.isArray(data)) {
                 setRegistrations(data);
@@ -82,7 +82,7 @@ export default function RegistrationsPage() {
                                 </tr>
                             ) : (
                                 registrations.map((reg) => (
-                                    <tr key={reg.id} className="hover:bg-primary/5 transition-colors group">
+                                    <tr onClick={() => console.log(reg,'hola')} key={reg.id} className="hover:bg-primary/5 transition-colors group">
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 bg-secondary-light rounded-full flex items-center justify-center text-primary/60 border border-secondary-light">
@@ -108,17 +108,16 @@ export default function RegistrationsPage() {
                                             </span>
                                         </td>
                                         <td className="px-8 py-6 text-center">
-                                            <span className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                                                reg.payment_status == 'pagado' || reg.payment_status === 'paid'
-                                                    ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                                            <span className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${reg.payment_status == 'pagado' || reg.payment_status === 'paid'
+                                                    ? 'bg-green-500/10 text-green-400 border border-green-500/20'
                                                     : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
-                                            }`}>
+                                                }`}>
                                                 <FaCreditCard />
-                                                {reg.payment_status?.toUpperCase() !== 'unpaid' ? 'Pendiente' : 'Pagado' }
+                                                {reg.payment_status?.toUpperCase() !== 'unpaid' ? 'Pagado' : 'Pendiente'}
                                             </span>
                                         </td>
                                         <td className="px-8 py-6 text-right">
-                                            <button 
+                                            <button
                                                 onClick={() => setSelectedRegistration(reg)}
                                                 className="p-2 bg-secondary-light rounded-xl text-primary hover:bg-primary hover:text-secondary hover:scale-110 transition-all"
                                             >
@@ -134,9 +133,9 @@ export default function RegistrationsPage() {
             </div>
 
             {selectedRegistration && (
-                <RegistrationDetailModal 
-                    registration={selectedRegistration} 
-                    onClose={() => setSelectedRegistration(null)} 
+                <RegistrationDetailModal
+                    registration={selectedRegistration}
+                    onClose={() => setSelectedRegistration(null)}
                 />
             )}
         </div>
