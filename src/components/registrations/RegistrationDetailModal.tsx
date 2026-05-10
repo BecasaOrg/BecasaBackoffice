@@ -103,11 +103,11 @@ export default function RegistrationDetailModal({ registration, onClose }: Props
                                 </h3>
                                 <div className="space-y-3">
                                     <DetailItem label="Estado" value={
-                                        <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${registration.payment_status === 'pagado' || registration.payment_status === 'paid'
+                                        <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${registration.payment_status === 'paid'
                                             ? 'bg-green-500/20 text-green-400'
                                             : 'bg-yellow-500/20 text-yellow-500'
                                             }`}>
-                                            {registration.payment_status}
+                                            {registration.payment_status === 'paid' ? 'Pagado' : 'Pendiente'}
                                         </span>
                                     } />
                                     <DetailItem label="Precio Total" value={formatCurrency(registration.total_price)} />
