@@ -4,6 +4,7 @@ import { UserInterface } from '@/interfaces/user.interface';
 import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { FaEye, FaSearch, FaFilter, FaRunning, FaVenusMars, FaTrash, FaPen, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import UserDetailModal from './UserDetailModal';
 import EditUserModal from './EditUserModal';
@@ -154,10 +155,12 @@ export default function UserTableClient({ users, pagination }: Props) {
                                             <div className="flex items-center gap-3">
                                                 {
                                                     user.avatar ? (
-                                                        <img
+                                                        <Image
                                                             src={user.avatar}
-                                                            alt="Avatar"
-                                                            className="w-10 h-10 object-cover rounded-full bg-secondary-light"
+                                                            alt={`Avatar de ${user.name}`}
+                                                            width={40}
+                                                            height={40}
+                                                            className="object-cover w-10 h-10 rounded-full bg-secondary-light"
                                                         />
                                                     ) : (
                                                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-[#8bc200] flex items-center justify-center text-secondary font-bold text-sm shadow-md">

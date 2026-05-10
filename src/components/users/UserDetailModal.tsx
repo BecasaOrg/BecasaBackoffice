@@ -2,6 +2,7 @@
 
 import { UserInterface } from '@/interfaces/user.interface';
 import React from 'react';
+import Image from 'next/image';
 import { FaTimes, FaUser, FaEnvelope, FaPhone, FaCalendar, FaRunning, FaSchool, FaVenusMars, FaGlobe } from 'react-icons/fa';
 
 interface Props {
@@ -36,7 +37,7 @@ export default function UserDetailModal({ user, onClose }: Props) {
                     <div className="flex items-center gap-3">
                         {
                             user?.avatar
-                                ? (<img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full object-cover bg-secondary-light" />)
+                                ? (<Image src={user.avatar} alt={`Avatar de ${user.name}`} width={48} height={48} className="rounded-full object-cover bg-secondary-light" />)
                                 : <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-secondary font-bold text-xl">
                                     {user.name?.charAt(0)}{user.last_name?.charAt(0)}
                                 </div>

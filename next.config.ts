@@ -5,6 +5,15 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "athleticscholarshipagency.com",
+        pathname: "/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
