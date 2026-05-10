@@ -23,7 +23,7 @@ export default function Sidebar() {
       {/* Mobile toggle button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden fixed bottom-4 left-4 z-50 p-2.5 bg-secondary rounded-xl text-white shadow-xl border border-secondary-light hover:bg-secondary-light transition-colors"
+        className="md:hidden fixed bottom-4 left-4 z-50 p-4 bg-secondary rounded-xl text-white shadow-xl border border-secondary-light hover:bg-secondary-light transition-colors"
         aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
       >
         {isOpen ? <FaTimes size={18} /> : <FaBars size={18} />}
