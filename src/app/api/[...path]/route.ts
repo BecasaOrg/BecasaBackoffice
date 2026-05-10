@@ -45,7 +45,9 @@ export async function GET(
     const contentType = response.headers.get("content-type");
 
     if (
+      contentType?.startsWith("image/") ||
       contentType?.includes("application/pdf") ||
+      contentType?.includes("application/JPeg") ||
       contentType?.includes("application/octet-stream")
     ) {
       const blob = await response.blob();
