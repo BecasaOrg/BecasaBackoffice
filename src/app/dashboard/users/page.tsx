@@ -16,13 +16,14 @@ export default async function Page() {
             'Authorization': `Bearer ${token}`
         },
         cache: 'force-cache',
-        next: { revalidate: 0 }
+        next: { revalidate: 30 }
     });
-    
+
     const responseData = await datos.json();
+
     let users: UserInterface[] = [];
-    
-    // Robust parsing
+
+
     if (Array.isArray(responseData)) users = responseData;
     else if (Array.isArray(responseData?.data)) users = responseData.data;
 
@@ -39,7 +40,7 @@ export default async function Page() {
                         <p className="text-muted text-sm font-medium">Búsqueda y gestión de perfiles deportivos</p>
                     </div>
                 </div>
-                
+
                 <div className="bg-secondary-light px-4 py-2 rounded-2xl border border-secondary-light flex items-center gap-2">
                     <span className="text-primary font-black text-xl">{users.length}</span>
                     <span className="text-muted text-xs font-bold uppercase tracking-widest pt-1">Registrados</span>
