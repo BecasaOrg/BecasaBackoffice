@@ -152,9 +152,19 @@ export default function UserTableClient({ users, pagination }: Props) {
                                     >
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-[#8bc200] flex items-center justify-center text-secondary font-bold text-sm shadow-md">
-                                                    {user.name?.charAt(0)}{user.last_name?.charAt(0)}
-                                                </div>
+                                                {
+                                                    user.avatar ? (
+                                                        <img
+                                                            src={user.avatar}
+                                                            alt="Avatar"
+                                                            className="w-10 h-10 object-cover rounded-full bg-secondary-light"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-[#8bc200] flex items-center justify-center text-secondary font-bold text-sm shadow-md">
+                                                            {user.name?.charAt(0)}{user.last_name?.charAt(0)}
+                                                        </div>
+                                                    )
+                                                }
                                                 <div>
                                                     <div className="text-white font-bold">{user.name} {user.last_name}</div>
                                                     <div className="text-xs text-muted">
@@ -235,11 +245,10 @@ export default function UserTableClient({ users, pagination }: Props) {
                                     key={page}
                                     href={`/dashboard/users?page=${page}`}
                                     scroll={false}
-                                    className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold transition-all cursor-pointer ${
-                                        page === currentPage
-                                            ? 'bg-primary text-secondary'
-                                            : 'text-muted hover:text-white hover:bg-secondary-light'
-                                    }`}
+                                    className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold transition-all cursor-pointer ${page === currentPage
+                                        ? 'bg-primary text-secondary'
+                                        : 'text-muted hover:text-white hover:bg-secondary-light'
+                                        }`}
                                 >
                                     {page}
                                 </Link>
