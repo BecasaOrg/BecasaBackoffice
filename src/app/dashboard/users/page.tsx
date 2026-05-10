@@ -2,13 +2,16 @@ import { UserInterface } from '@/interfaces/user.interface';
 import { cookies } from 'next/headers';
 import React from 'react';
 import { FaUsers } from 'react-icons/fa';
-import UserTableClient from '@/components/users/UserTableClient';
+import UserTableClient, { PaginationMeta } from '@/components/users/UserTableClient';
 
-export default async function Page() {
+export default async function Page(props: { searchParams?: Promise<{ page?: string }> }) {
+    const searchParams = await props.searchParams;
+    const page = searchParams?.page || '1';
+
     const cookiesResolved = await cookies();
     const token = cookiesResolved.get('auth_token')?.value;
 
-    const datos = await fetch(`${process.env.API_URL}/users`, {
+    const datos = await fetch(`${process.env.API_URL}/users?page=${page}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -22,10 +25,22 @@ export default async function Page() {
     const responseData = await datos.json();
 
     let users: UserInterface[] = [];
+    let pagination: PaginationMeta = { currentPage: 1, lastPage: 1, total: 0, perPage: 10, from: 0, to: 0 };
 
-
-    if (Array.isArray(responseData)) users = responseData;
-    else if (Array.isArray(responseData?.data)) users = responseData.data;
+    if (Array.isArray(responseData)) {
+        users = responseData;
+        pagination = { currentPage: 1, lastPage: 1, total: users.length, perPage: users.length, from: 1, to: users.length };
+    } else if (responseData?.data && Array.isArray(responseData.data)) {
+        users = responseData.data;
+        pagination = {
+            currentPage: responseData.current_page || 1,
+            lastPage: responseData.last_page || 1,
+            total: responseData.total || users.length,
+            perPage: responseData.per_page || users.length,
+            from: responseData.from || 0,
+            to: responseData.to || users.length,
+        };
+    }
 
     return (
         <div className="space-y-8">
@@ -42,7 +57,7 @@ export default async function Page() {
                 </div>
 
                 <div className="bg-secondary-light px-4 py-2 rounded-2xl border border-secondary-light flex items-center gap-2">
-                    <span className="text-primary font-black text-xl">{users.length}</span>
+                    <span className="text-primary font-black text-xl">{pagination.total}</span>
                     <span className="text-muted text-xs font-bold uppercase tracking-widest pt-1">Registrados</span>
                 </div>
             </div>
@@ -56,7 +71,7 @@ export default async function Page() {
                     </div>
                 </div>
             ) : (
-                <UserTableClient users={users} />
+                <UserTableClient users={users} pagination={pagination} />
             )}
         </div>
     );

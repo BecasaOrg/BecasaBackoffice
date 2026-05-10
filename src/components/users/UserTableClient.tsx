@@ -3,15 +3,26 @@
 import { UserInterface } from '@/interfaces/user.interface';
 import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaEye, FaSearch, FaFilter, FaRunning, FaVenusMars, FaTrash, FaPen } from 'react-icons/fa';
+import Link from 'next/link';
+import { FaEye, FaSearch, FaFilter, FaRunning, FaVenusMars, FaTrash, FaPen, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import UserDetailModal from './UserDetailModal';
 import EditUserModal from './EditUserModal';
 
-interface Props {
-    users: UserInterface[];
+export interface PaginationMeta {
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    perPage: number;
+    from: number;
+    to: number;
 }
 
-export default function UserTableClient({ users }: Props) {
+interface Props {
+    users: UserInterface[];
+    pagination: PaginationMeta;
+}
+
+export default function UserTableClient({ users, pagination }: Props) {
     const [searchTerm, setSearchTerm] = useState('');
     const [sportFilter, setSportFilter] = useState('');
     const [genderFilter, setGenderFilter] = useState('');
@@ -19,13 +30,15 @@ export default function UserTableClient({ users }: Props) {
     const [userToEdit, setUserToEdit] = useState<UserInterface | null>(null);
     const router = useRouter();
 
+    const { currentPage, lastPage, total, perPage, from, to } = pagination;
+
     // Get unique sports for the filter dropdown
     const uniqueSports = useMemo(() => {
         const sports = users.map(user => user.sport).filter(Boolean);
         return Array.from(new Set(sports)).sort();
     }, [users]);
 
-    // Filter users
+    // Client-side filter within current page
     const filteredUsers = useMemo(() => {
         return users.filter(user => {
             const matchesSearch =
@@ -38,6 +51,26 @@ export default function UserTableClient({ users }: Props) {
             return matchesSearch && matchesSport && matchesGender;
         });
     }, [users, searchTerm, sportFilter, genderFilter]);
+
+    // Generate visible page numbers
+    const pageNumbers = useMemo(() => {
+        const pages: (number | string)[] = [];
+        const maxVisible = 5;
+        if (lastPage <= maxVisible + 2) {
+            for (let i = 1; i <= lastPage; i++) pages.push(i);
+        } else {
+            pages.push(1);
+            let start = Math.max(2, currentPage - 1);
+            let end = Math.min(lastPage - 1, currentPage + 1);
+            if (currentPage <= 3) { start = 2; end = Math.min(maxVisible, lastPage - 1); }
+            if (currentPage >= lastPage - 2) { start = Math.max(2, lastPage - maxVisible + 1); end = lastPage - 1; }
+            if (start > 2) pages.push('...');
+            for (let i = start; i <= end; i++) pages.push(i);
+            if (end < lastPage - 1) pages.push('...');
+            pages.push(lastPage);
+        }
+        return pages;
+    }, [lastPage, currentPage]);
 
     return (
         <div className="space-y-6">
@@ -177,6 +210,53 @@ export default function UserTableClient({ users }: Props) {
                     </table>
                 </div>
             </div>
+
+            {/* Pagination */}
+            {lastPage > 1 && (
+                <div className="flex items-center justify-between bg-secondary/40 backdrop-blur-md px-5 py-3 rounded-2xl border border-secondary-light shadow-xl">
+                    <span className="text-muted text-sm">
+                        Mostrando {from}-{to} de {total}
+                    </span>
+                    <div className="flex items-center gap-1">
+                        {currentPage > 1 && (
+                            <Link
+                                href={`/dashboard/users?page=${currentPage - 1}`}
+                                scroll={false}
+                                className="w-9 h-9 rounded-xl flex items-center justify-center text-muted hover:text-white hover:bg-secondary-light transition-all cursor-pointer"
+                            >
+                                <FaChevronLeft size={12} />
+                            </Link>
+                        )}
+                        {pageNumbers.map((page, idx) =>
+                            typeof page === 'string' ? (
+                                <span key={`ellipsis-${idx}`} className="w-9 h-9 flex items-center justify-center text-muted text-sm">...</span>
+                            ) : (
+                                <Link
+                                    key={page}
+                                    href={`/dashboard/users?page=${page}`}
+                                    scroll={false}
+                                    className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold transition-all cursor-pointer ${
+                                        page === currentPage
+                                            ? 'bg-primary text-secondary'
+                                            : 'text-muted hover:text-white hover:bg-secondary-light'
+                                    }`}
+                                >
+                                    {page}
+                                </Link>
+                            )
+                        )}
+                        {currentPage < lastPage && (
+                            <Link
+                                href={`/dashboard/users?page=${currentPage + 1}`}
+                                scroll={false}
+                                className="w-9 h-9 rounded-xl flex items-center justify-center text-muted hover:text-white hover:bg-secondary-light transition-all cursor-pointer"
+                            >
+                                <FaChevronRight size={12} />
+                            </Link>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Modals */}
             {selectedUser && (
