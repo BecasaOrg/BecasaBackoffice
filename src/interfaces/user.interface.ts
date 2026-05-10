@@ -2,6 +2,7 @@ export interface UserInterface {
   id: number;
   name: string;
   last_name: string;
+  avatar: string | null;
   birth_date: string;
   email: string;
   email_verified_at: string | null;

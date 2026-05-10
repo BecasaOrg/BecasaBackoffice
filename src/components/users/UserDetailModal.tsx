@@ -34,9 +34,13 @@ export default function UserDetailModal({ user, onClose }: Props) {
                 {/* Header */}
                 <div className="bg-secondary-light px-6 py-4 flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-secondary font-bold text-xl">
-                            {user.name?.charAt(0)}{user.last_name?.charAt(0)}
-                        </div>
+                        {
+                            user?.avatar
+                                ? (<img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full object-cover" />)
+                                : <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-secondary font-bold text-xl">
+                                    {user.name?.charAt(0)}{user.last_name?.charAt(0)}
+                                </div>
+                        }
                         <div>
                             <h2 className="text-white font-bold text-lg">{user.name} {user.last_name}</h2>
                             <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">Estudiante</span>
