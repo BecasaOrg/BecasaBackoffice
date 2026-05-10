@@ -2,8 +2,10 @@
 
 import { UserInterface } from '@/interfaces/user.interface';
 import React, { useState, useMemo } from 'react';
-import { FaEye, FaSearch, FaFilter, FaRunning, FaVenusMars, FaTrash } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
+import { FaEye, FaSearch, FaFilter, FaRunning, FaVenusMars, FaTrash, FaPen } from 'react-icons/fa';
 import UserDetailModal from './UserDetailModal';
+import EditUserModal from './EditUserModal';
 
 interface Props {
     users: UserInterface[];
@@ -14,6 +16,8 @@ export default function UserTableClient({ users }: Props) {
     const [sportFilter, setSportFilter] = useState('');
     const [genderFilter, setGenderFilter] = useState('');
     const [selectedUser, setSelectedUser] = useState<UserInterface | null>(null);
+    const [userToEdit, setUserToEdit] = useState<UserInterface | null>(null);
+    const router = useRouter();
 
     // Get unique sports for the filter dropdown
     const uniqueSports = useMemo(() => {
@@ -146,7 +150,7 @@ export default function UserTableClient({ users }: Props) {
                                             <span className="text-sm text-white font-medium">{user.graduation_year || 'N/A'}</span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="flex justify-center">
+                                            <div className="flex justify-center gap-3">
                                                 <button
                                                     onClick={() => setSelectedUser(user)}
                                                     className="w-9 h-9 bg-secondary-light rounded-xl flex items-center justify-center text-primary border border-secondary-light hover:bg-primary hover:text-secondary transition-all"
@@ -157,6 +161,13 @@ export default function UserTableClient({ users }: Props) {
                                                 {/* <button className='w-9 h-9 bg-secondary-light rounded-xl flex items-center justify-center text-primary border border-secondary-light hover:bg-primary hover:text-secondary transition-all'>
                                                     <FaTrash size={14} />
                                                 </button> */}
+                                                <button
+                                                    onClick={() => setUserToEdit(user)}
+                                                    className="w-9 h-9 bg-secondary-light rounded-xl flex items-center justify-center text-primary border border-secondary-light hover:bg-primary hover:text-secondary transition-all"
+                                                    title="Editar estudiante"
+                                                >
+                                                    <FaPen size={14} />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -167,11 +178,18 @@ export default function UserTableClient({ users }: Props) {
                 </div>
             </div>
 
-            {/* Modal */}
+            {/* Modals */}
             {selectedUser && (
                 <UserDetailModal
                     user={selectedUser}
                     onClose={() => setSelectedUser(null)}
+                />
+            )}
+            {userToEdit && (
+                <EditUserModal
+                    user={userToEdit}
+                    onClose={() => setUserToEdit(null)}
+                    onUpdated={() => router.refresh()}
                 />
             )}
         </div>
