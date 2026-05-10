@@ -14,6 +14,7 @@ export interface CampInterface {
     extraordinary_price?: string | number;
     normal_price_text?: string;
     extraordinary_price_text?: string;
+    available_spots?: number;
 
     capacity: number;
     min_age?: number;

@@ -165,7 +165,7 @@ export default function CampsPage() {
                                             </div>
                                         </td>
                                         <td className="px-8 py-6 text-right">
-                                            <div className="text-white font-bold">{camp.capacity} Cupos</div>
+                                            <div className="text-white font-bold">{camp.available_spots} Cupos</div>
                                             <div className="text-muted text-xs">{camp.min_age || '8'} - {camp.max_age || '17'} años</div>
                                         </td>
                                         <td className="px-8 py-6">
@@ -189,7 +189,6 @@ export default function CampsPage() {
 
             {showModal && (
                 <CreateCampModal
-                    token=""
                     onClose={() => setShowModal(false)}
                     onCreated={fetchCamps}
                 />
