@@ -2,7 +2,8 @@
 
 import { RegistrationInterface } from '@/interfaces/registration.interface';
 import React, { useEffect, useState, useCallback } from 'react';
-import { FaClipboardList, FaUser, FaUmbrellaBeach, FaCreditCard, FaChevronRight } from 'react-icons/fa';
+import { FaClipboardList, FaUser, FaUmbrellaBeach, FaCreditCard, FaChevronRight, FaFileExcel } from 'react-icons/fa';
+import * as XLSX from 'xlsx';
 import RegistrationDetailModal from '@/components/registrations/RegistrationDetailModal';
 
 export default function RegistrationsPage() {
@@ -37,6 +38,37 @@ export default function RegistrationsPage() {
         fetchRegistrations();
     }, [fetchRegistrations]);
 
+    const exportToExcel = () => {
+        if (registrations.length === 0) return;
+
+        const dataToExport = registrations.map(reg => ({
+            'Nombre del Estudiante': `${reg.user?.name || ''} ${reg.user?.last_name || ''}`.trim(),
+            'Email Estudiante': reg.user?.email || '',
+            'Campamento': reg.camp?.name || `ID: ${reg.camp_id}`,
+            'Precio Total': reg.total_price || 0,
+            'Estado de Pago': reg.payment_status === 'paid' || reg.payment_status === 'pagado' ? 'Pagado' : 'Pendiente',
+            'Cuotas': reg.installments_count || 1,
+            'Posición': reg.position || '',
+            'Nivel': reg.skill_level || '',
+            'Talla de Camiseta': reg.shirt_size || '',
+            'Club': reg.club_name || 'N/A',
+            'Años de Experiencia': reg.years_experience || 0,
+            'Identificación': `${reg.identification_type} ${reg.identification_number}`,
+            'Colegio': reg.school_name || 'N/A',
+            'Tutor/Acudiente': reg.guardian_name || '',
+            'Teléfono Tutor': reg.guardian_phone || '',
+            'Email Tutor': reg.guardian_email || '',
+            'Condiciones Médicas': reg.medical_conditions || 'Ninguna',
+            'Restricciones Dietéticas': reg.dietary_restrictions || 'Ninguna',
+            'Fecha de Registro': reg.created_at ? new Date(reg.created_at).toLocaleString() : ''
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Inscripciones");
+        XLSX.writeFile(workbook, "Inscripciones_Becasa.xlsx");
+    };
+
     return (
         <div className="space-y-4 md:space-y-6">
             {/* Header */}
@@ -50,6 +82,15 @@ export default function RegistrationsPage() {
                         <p className="text-muted text-xs md:text-sm font-medium">Gestiona los deportistas inscritos en los campamentos</p>
                     </div>
                 </div>
+                
+                <button 
+                    onClick={exportToExcel}
+                    disabled={loading || registrations.length === 0}
+                    className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto justify-center shadow-lg shadow-green-900/20"
+                >
+                    <FaFileExcel size={16} />
+                    Exportar a Excel
+                </button>
             </div>
 
             {/* Mobile: Card layout */}
