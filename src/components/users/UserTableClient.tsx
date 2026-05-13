@@ -5,7 +5,8 @@ import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaEye, FaSearch, FaFilter, FaRunning, FaVenusMars, FaTrash, FaPen, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaEye, FaSearch, FaFilter, FaRunning, FaVenusMars, FaPen, FaChevronLeft, FaChevronRight, FaFileExcel } from 'react-icons/fa';
+import * as XLSX from 'xlsx';
 import UserDetailModal from './UserDetailModal';
 import EditUserModal from './EditUserModal';
 
@@ -30,6 +31,33 @@ export default function UserTableClient({ users, pagination }: Props) {
     const [selectedUser, setSelectedUser] = useState<UserInterface | null>(null);
     const [userToEdit, setUserToEdit] = useState<UserInterface | null>(null);
     const router = useRouter();
+
+    const exportToExcel = () => {
+        if (filteredUsers.length === 0) return;
+        const dataToExport = filteredUsers.map(u => {
+            const bd = u.birth_date ? new Date(u.birth_date) : null;
+            const age = bd ? Math.floor((Date.now() - bd.getTime()) / (365.25 * 24 * 3600 * 1000)) : '';
+            const gender = u.gender === 'M' ? 'Masculino' : u.gender === 'F' ? 'Femenino' : (u.gender || '');
+            return {
+                'Nombre': `${u.name || ''} ${u.last_name || ''}`.trim(),
+                'Fecha de Nacimiento': bd ? bd.toLocaleDateString('es-CO') : '',
+                'Edad': age,
+                'Género': gender,
+                'WhatsApp': u.phone || '',
+                'Correo Electrónico': u.email || '',
+                'Ciudad': u.city?.name || '',
+                'País de Nacimiento': u.birth_country?.name || (u as any).birthCountry?.name || '',
+                'Grado / Año Graduación': u.graduation_year || '',
+                'Deporte': u.sport || '',
+                'Rol': u.role || '',
+                'Miembro desde': u.created_at ? new Date(u.created_at).toLocaleDateString('es-CO') : '',
+            };
+        });
+        const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Estudiantes');
+        XLSX.writeFile(workbook, 'Estudiantes_Becasa.xlsx');
+    };
 
     const { currentPage, lastPage, total, perPage, from, to } = pagination;
 
@@ -88,7 +116,7 @@ export default function UserTableClient({ users, pagination }: Props) {
                     />
                 </div>
 
-                <div className="flex w-full md:w-auto gap-4">
+                <div className="flex w-full md:w-auto gap-4 flex-wrap">
                     <div className="relative w-full md:w-48">
                         <FaRunning className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/60" />
                         <select
@@ -121,6 +149,15 @@ export default function UserTableClient({ users, pagination }: Props) {
                             <FaFilter size={12} />
                         </div>
                     </div>
+
+                    <button
+                        onClick={exportToExcel}
+                        disabled={filteredUsers.length === 0}
+                        className="flex items-center gap-2 bg-green-600 hover:bg-green-500 text-white px-4 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shadow-lg shadow-green-900/20"
+                    >
+                        <FaFileExcel size={15} />
+                        Exportar Excel
+                    </button>
                 </div>
             </div>
 
