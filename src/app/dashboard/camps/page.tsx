@@ -4,13 +4,15 @@ import { CampInterface } from '@/interfaces/camp.interface';
 import CreateCampModal from '@/components/camps/CreateCampModal';
 import EditCampModal from '@/components/camps/EditCampModal';
 import React, { useEffect, useState, useCallback } from 'react';
-import { FaPlus, FaSearchLocation, FaRunning, FaEdit, FaCalendarAlt } from 'react-icons/fa';
+import { FaPlus, FaSearchLocation, FaRunning, FaEdit, FaCalendarAlt, FaTrash, FaExclamationTriangle } from 'react-icons/fa';
 
 export default function CampsPage() {
     const [camps, setCamps] = useState<CampInterface[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [campToEdit, setCampToEdit] = useState<CampInterface | null>(null);
+    const [campToDelete, setCampToDelete] = useState<CampInterface | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const fetchCamps = useCallback(async () => {
         setLoading(true);
@@ -48,6 +50,28 @@ export default function CampsPage() {
             });
         } catch {
             return dateString;
+        }
+    };
+
+    const handleDeleteCamp = async () => {
+        if (!campToDelete) return;
+        setIsDeleting(true);
+        try {
+            const res = await fetch(`/api/camps/${campToDelete.id}`, {
+                method: 'DELETE',
+            });
+            if (res.ok) {
+                setCampToDelete(null);
+                fetchCamps();
+            } else {
+                const data = await res.json().catch(() => ({}));
+                alert(data.message || 'Error al eliminar el campamento.');
+            }
+        } catch (error) {
+            console.error("Error deleting camp:", error);
+            alert('Error de conexión al eliminar el campamento.');
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -93,12 +117,12 @@ export default function CampsPage() {
                             {loading ? (
                                 Array(3).fill(0).map((_, i) => (
                                     <tr key={i} className="animate-pulse">
-                                        <td colSpan={6} className="px-8 py-8 h-20 bg-secondary-light/10"></td>
+                                        <td colSpan={7} className="px-8 py-8 h-20 bg-secondary-light/10"></td>
                                     </tr>
                                 ))
                             ) : camps.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-8 py-20 text-center">
+                                    <td colSpan={7} className="px-8 py-20 text-center">
                                         <div className="flex flex-col items-center gap-3 opacity-30">
                                             <FaSearchLocation size={48} className="text-muted" />
                                             <p className="text-xl font-bold text-muted">No hay campamentos registrados</p>
@@ -116,7 +140,6 @@ export default function CampsPage() {
                                                 <FaSearchLocation className="text-primary/40" />
                                                 {camp.city?.name ? `${camp.city.name} - ` : ''}
                                                 {camp.address || camp.location || 'Sede no especificada'}
-
                                             </div>
                                         </td>
                                         <td className="px-8 py-6">
@@ -169,13 +192,20 @@ export default function CampsPage() {
                                             <div className="text-muted text-xs">{camp.min_age || '8'} - {camp.max_age || '17'} años</div>
                                         </td>
                                         <td className="px-8 py-6">
-                                            <div className="flex justify-center">
+                                            <div className="flex justify-center items-center gap-2">
                                                 <button 
                                                     onClick={() => setCampToEdit(camp)}
                                                     className="w-10 h-10 bg-secondary-light/50 rounded-xl flex items-center justify-center text-primary border border-secondary-light hover:bg-primary hover:text-secondary transition-all"
                                                     title="Editar campamento"
                                                 >
                                                     <FaEdit size={16} />
+                                                </button>
+                                                <button 
+                                                    onClick={() => setCampToDelete(camp)}
+                                                    className="w-10 h-10 bg-secondary-light/50 rounded-xl flex items-center justify-center text-red-400 border border-secondary-light hover:bg-red-500 hover:text-white transition-all"
+                                                    title="Eliminar campamento"
+                                                >
+                                                    <FaTrash size={15} />
                                                 </button>
                                             </div>
                                         </td>
@@ -186,6 +216,41 @@ export default function CampsPage() {
                     </table>
                 </div>
             </div>
+
+            {/* Modal Confirmar Eliminación */}
+            {campToDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-[#121820] border border-secondary-light p-6 md:p-8 rounded-3xl max-w-md w-full shadow-2xl space-y-6">
+                        <div className="w-14 h-14 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center justify-center text-red-400 mx-auto">
+                            <FaExclamationTriangle size={26} />
+                        </div>
+                        <div className="text-center space-y-2">
+                            <h3 className="text-xl font-black text-white">¿Eliminar campamento?</h3>
+                            <p className="text-muted text-sm leading-relaxed">
+                                Estás a punto de eliminar el campamento <strong className="text-white font-semibold">"{campToDelete.name}"</strong>. Esta acción no se puede deshacer.
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <button
+                                type="button"
+                                disabled={isDeleting}
+                                onClick={() => setCampToDelete(null)}
+                                className="flex-1 px-4 py-3 bg-secondary-light/60 hover:bg-secondary-light text-white font-bold rounded-2xl transition-all disabled:opacity-50"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="button"
+                                disabled={isDeleting}
+                                onClick={handleDeleteCamp}
+                                className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-500 text-white font-black rounded-2xl transition-all shadow-[0_4px_15px_rgba(239,68,68,0.3)] disabled:opacity-50"
+                            >
+                                {isDeleting ? 'Eliminando...' : 'Sí, eliminar'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {showModal && (
                 <CreateCampModal
